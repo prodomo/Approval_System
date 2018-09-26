@@ -3,8 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import * as uiv from 'uiv';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.use(uiv);
 
 /* eslint-disable no-new */
 new Vue({
