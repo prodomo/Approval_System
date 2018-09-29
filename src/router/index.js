@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import CreateApprovalPage from '@/components/CreateApprovalPage'
+import CreateApprovalPageStep1 from '@/components/CreateApprovalPageStep1'
 
 Vue.use(Router)
 
@@ -14,8 +14,8 @@ export default new Router({
     // },
     {
       path: '/',
-      name: 'CreateApprovalPage',
-      component: CreateApprovalPage
+      name: 'CreateApprovalPageStep1',
+      component: CreateApprovalPageStep1
     }
   ]
 })
