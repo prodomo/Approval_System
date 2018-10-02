@@ -68,21 +68,21 @@
             </tr>
             <tr>
                 <th>主旨</th>
-                <td colspan="6">
+                <td colspan="7">
                     <input class="form-control" type="text" placeholder="">
                 </td>
             </tr>
             </tbody>
         </table>
-        <button class="btn btn-primary btn-sm" >主選單</button>
-        <button class="btn btn-primary btn-sm" >下一步</button>
+        <btn class="btn btn-primary" >主選單</btn>
+        <btn class="btn btn-primary" to="/02" >下一步</btn>
     </div>
 </div>
 </template>
 
 <script>
 export default {
-    name: 'CreateApprovalPage',
+    name: 'CreateApprovalPageStep1',
 }
 </script>
 
