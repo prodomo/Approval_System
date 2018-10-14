@@ -38,41 +38,56 @@
                             </td>
                             <th rowspan="4">主辦單位</th>
                             <td rowspan="4">
-                                <input class="form-control" type="text" placeholder="" v-model="form.MainDepart">
+                                <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
+                                    <option value="[資訊中心]">[資訊中心] xxx</option>
+                                    <option value="[運務部]]">[運務部] xxx</option>
+                                    <div v-show="errors.has(`Priority:required`)" class="error">
+                                    請選擇主辦單位
+                                    </div>
+                                </select>
                             </td>
                             <th rowspan="4">速別</th>
                             <td rowspan="4">
-                                <select class="form-control" v-model="form.Priority">
-                                    <option value="1">普通件</option>
-                                    <option value="2">速件</option>
-                                    <option value="3">最速件</option>
-                                    <option value="4">特速件</option>
+                                <select class="form-control" v-model="form.Priority" name="Priority"  v-validate="'required'">
+                                    <option value="普通件">普通件</option>
+                                    <option value="速件">速件</option>
+                                    <option value="最速件">最速件</option>
+                                    <option value="特速件">特速件</option>
+                                    <div v-show="errors.has(`Priority:required`)" class="error">
+                                    請選擇速別
+                                    </div>
                                 </select>
                             </td>
                             
                             <th rowspan="4">密等</th>
                             <td rowspan="4">
-                                <select class="form-control" v-model="form.Confidentiality">
-                                    <option value="1">普通</option>
-                                    <option value="2">密</option>
-                                    <option value="3">機密</option>
-                                    <option value="4">極機密</option>
+                                <select class="form-control" v-model="form.Confidentiality" name="Confidentiality"  v-validate="'required'">
+                                    <option value="普通">普通</option>
+                                    <option value="密">密</option>
+                                    <option value="機密">機密</option>
+                                    <option value="極機密">極機密</option>
+                                    <div v-show="errors.has(`Priority:required`)" class="error">
+                                    請選擇密等
+                                    </div>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th>ISO管制文件</th>
                             <td>
-                                <label><input type="radio" name="isoValue" value="null" v-model="form.IsoValue"/>無</label>
-                                <label><input type="radio" name="isoValue" value="add" v-model="form.IsoValue"/>新增</label>
-                                <label><input type="radio" name="isoValue" value="modify" v-model="form.IsoValue"/>修訂</label>
-                                <label><input type="radio" name="isoValue" value="delete" v-model="form.IsoValue"/>廢止</label>
+                                <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
+                                <label><input type="radio" name="isoValue" value="新增" v-model="form.IsoValue"/>新增</label>
+                                <label><input type="radio" name="isoValue" value="修訂" v-model="form.IsoValue"/>修訂</label>
+                                <label><input type="radio" name="isoValue" value="廢止" v-model="form.IsoValue"/>廢止</label>
                             </td>
                         </tr>
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
-                                <input class="form-control" type="text" placeholder="" v-model="form.Subject">
+                                <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
+                                <div v-show="errors.has(`Subject:required`)" class="error">
+                                請選擇密等
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -83,7 +98,7 @@
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8">本文，依據{{form.LastID}}辦理</th></tr>
+                        <tr><th v-if="form.LastID!=null" colspan="8">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
                             <td>簽呈號</td>
                             <td colspan="3">
@@ -115,11 +130,11 @@
                         <tr>
                             <td>承辦單位</td>
                             <td>
-                            <label></label>
+                            <label>{{"xx部"}}</label>
                             </td>
                             <td>承辦人員</td>
                             <td>
-                            <label></label>
+                            <label>{{"XXX"}}</label>
                             </td>
                             <td>歸檔日期</td>
                             <td>
@@ -149,7 +164,9 @@
                         <tr>
                             <td>說明</td>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description"></textarea>
+                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description">
+
+                                </textarea>
                             </td>
                         </tr>
                         <tr>
@@ -161,10 +178,10 @@
                         <tr>
                             <td>簽核選項</td>
                             <td colspan="7">
-                                <label><input type="radio" name="toDo" value="1" v-model="form.ToDoValue"/>代為決行</label>
-                                <label><input type="radio" name="toDo" value="2" v-model="form.ToDoValue"/>簽核送出</label>
-                                <label><input type="radio" name="toDo" value="3" v-model="form.ToDoValue"/>送會其他單位</label>
-                                <label><input type="radio" name="toDo" value="4" v-model="form.ToDoValue"/>單位分文</label>
+                                <label><input type="radio" name="toDo" value="1" v-model="form.ToDoValue"/>代為決行</label><br>
+                                <label><input type="radio" name="toDo" value="2" v-model="form.ToDoValue"/>簽核送出</label><br>
+                                <label><input type="radio" name="toDo" value="3" v-model="form.ToDoValue"/>送會其他單位</label><br>
+                                <label><input type="radio" name="toDo" value="4" v-model="form.ToDoValue"/>單位分文</label><br>
                             </td>
                         </tr>
                         <tr>
@@ -185,11 +202,11 @@
                 <div v-if="step==3">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8">本文，依據{{form.LastID}}辦理</th></tr>
+                        <tr><th colspan="8"  v-if="form.LastID!=null">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
                             <td>簽呈號</td>
                             <td colspan="3">
-                            <label></label>
+                            <label>{{"10700101501"}}</label>
                             </td>
                             <td>建檔日期</td>
                             <td>
@@ -203,7 +220,7 @@
                         <tr>
                             <td>簽呈字號</td>
                             <td colspan="3">
-                            <label></label>
+                            <label>{{"107XX簽呈字第1501號"}}</label>
                             </td>
                             <td>限辦日期</td>
                             <td>
@@ -217,11 +234,11 @@
                         <tr>
                             <td>承辦單位</td>
                             <td>
-                            <label></label>
+                            <label>{{"資訊中心"}}</label>
                             </td>
                             <td>承辦人員</td>
                             <td>
-                            <label></label>
+                            <label>{{"XXX"}}</label>
                             </td>
                             <td>歸檔日期</td>
                             <td>
@@ -240,12 +257,12 @@
                         </tr>
                         <tr class="table-warning">
                             <td colspan="8">
-                                <label>承辦人員   目前狀態 </label>
+                                <label>承辦人員: xxx   目前狀態: xxx </label>
                             </td>
                         </tr>
                         <tr class="table-warning">
                             <td colspan="8">
-                                <label>單位主管   目前狀態 </label>
+                                <label>單位主管: xxx   目前狀態: xxx </label>
                             </td>
                         </tr>
                         <tr>
@@ -259,10 +276,10 @@
                         <tr>
                             <td>簽核選項</td>
                             <td colspan="7">
-                                <div v-if="form.ToDoValue == 1">代為決行</div>
-                                <div v-if="form.ToDoValue == 2">簽核送出</div>
-                                <div v-if="form.ToDoValue == 3">送會其他單位</div>
-                                <div v-if="form.ToDoValue == 4">單位分文</div>
+                                <li v-if="form.ToDoValue == 1">代為決行</li>
+                                <li v-if="form.ToDoValue == 2">簽核送出</li>
+                                <li v-if="form.ToDoValue == 3">送會其他單位</li>
+                                <li v-if="form.ToDoValue == 4">單位分文</li>
 
                             </td>
                         </tr>
@@ -278,7 +295,6 @@
                         </td></tr>
                     </table>
                 </div>
-
             </div>
         </section>
 
@@ -292,7 +308,7 @@ export default {
         return{
             step:1,
             form:{
-                LastID:'',
+                LastID:null,
                 ID:'',
                 MainDepart:'',
                 Priority:'',
