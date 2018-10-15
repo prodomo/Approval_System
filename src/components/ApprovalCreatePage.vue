@@ -29,8 +29,8 @@
                 <div v-if="step==1">
                     <table class="table">
                         <tbody>
-                        <tr><th colspan="8">*簽呈未經核決單位核准前，所有人員不得擅自執行作業或送出任何文件。</th></tr>
-                        <tr><th colspan="8">*急件簽呈須先行作業時，請主動與核決單位聯絡，經核准才可作業。</th></tr>
+                        <tr><th colspan="8" class="Reminder">*簽呈未經核決單位核准前，所有人員不得擅自執行作業或送出任何文件。</th></tr>
+                        <tr><th colspan="8" class="Reminder">*急件簽呈須先行作業時，請主動與核決單位聯絡，經核准才可作業。</th></tr>
                         <tr>
                             <th>依據收文號</th>
                             <td>
@@ -41,10 +41,8 @@
                                 <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
                                     <option value="[資訊中心]">[資訊中心] xxx</option>
                                     <option value="[運務部]]">[運務部] xxx</option>
-                                    <div v-show="errors.has(`Priority:required`)" class="error">
-                                    請選擇主辦單位
-                                    </div>
                                 </select>
+                                <span v-show="errors.has(`MainDepart:required`)" class="error">{{"請選擇主辦單位"}}</span>
                             </td>
                             <th rowspan="4">速別</th>
                             <td rowspan="4">
@@ -53,10 +51,8 @@
                                     <option value="速件">速件</option>
                                     <option value="最速件">最速件</option>
                                     <option value="特速件">特速件</option>
-                                    <div v-show="errors.has(`Priority:required`)" class="error">
-                                    請選擇速別
-                                    </div>
                                 </select>
+                                <span v-show="errors.has(`Priority:required`)" class="error">{{"請選擇速別"}}</span>
                             </td>
                             
                             <th rowspan="4">密等</th>
@@ -66,10 +62,8 @@
                                     <option value="密">密</option>
                                     <option value="機密">機密</option>
                                     <option value="極機密">極機密</option>
-                                    <div v-show="errors.has(`Priority:required`)" class="error">
-                                    請選擇密等
-                                    </div>
                                 </select>
+                                <span v-show="errors.has(`Confidentiality:required`)" class="error">{{"請選擇密等"}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -85,68 +79,68 @@
                             <th>主旨</th>
                             <td colspan="7">
                                 <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
-                                <div v-show="errors.has(`Subject:required`)" class="error">
-                                請選擇密等
-                                </div>
+                                <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                    <btn class="btn btn-primary" >主選單</btn>
-                    <btn class="btn btn-primary" @click="step++" >下一步</btn>
+                    <div class="button">
+                        <btn class="btn btn-primary">主選單</btn>
+                        <btn class="btn btn-primary" @click="next">下一步</btn>
+                    </div>
                 </div>
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th v-if="form.LastID!=null" colspan="8">本文，依據{{form.LastID}}辦理</th></tr>
+                        <tr><th v-if="form.LastID!=null" colspan="8" class="Reminder">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
-                            <td>簽呈號</td>
+                            <th>簽呈號</th>
                             <td colspan="3">
                             <label></label>
                             </td>
-                            <td>建檔日期</td>
+                            <th>建檔日期</th>
                             <td>
                                 <label></label>
                             </td>
-                            <td>密等</td>
+                            <th>密等</th>
                             <td>
                                 <label>{{form.Confidentiality}}</label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>簽呈字號</td>
+                            <th>簽呈字號</th>
                             <td colspan="3">
                             <label></label>
                             </td>
-                            <td>限辦日期</td>
+                            <th>限辦日期</th>
                             <td>
                                 <label></label>
                             </td>
-                            <td>速別</td>
+                            <th>速別</th>
                             <td>
                                 <label>{{form.Priority}}</label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>承辦單位</td>
+                            <th>承辦單位</th>
                             <td>
                             <label>{{"xx部"}}</label>
                             </td>
-                            <td>承辦人員</td>
+                            <th>承辦人員</th>
                             <td>
                             <label>{{"XXX"}}</label>
                             </td>
-                            <td>歸檔日期</td>
+                            <th>歸檔日期</th>
                             <td>
                                 <label></label>
                             </td>
-                            <td>處理狀態</td>
+                            <th>處理狀態</th>
                             <td>
                                 <label></label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>主旨</td>
+                            <th>主旨</th>
                             <td colspan="7">
                                 <label>{{form.Subject}}</label>
                             </td>
@@ -162,39 +156,40 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>說明</td>
+                            <th>說明</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description">
-
-                                </textarea>
+                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
+                                <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>擬辦</td>
+                            <th>擬辦</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Proposition"></textarea>
+                                <textarea class="form-control" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
+                                <span v-show="errors.has(`Proposition:required`)" class="error">{{"請輸入擬辦"}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>簽核選項</td>
-                            <td colspan="7">
+                            <th>簽核選項</th>
+                            <td colspan="7" name="Proposition" v-validate="'ToDoValue'">
                                 <label><input type="radio" name="toDo" value="1" v-model="form.ToDoValue"/>代為決行</label><br>
                                 <label><input type="radio" name="toDo" value="2" v-model="form.ToDoValue"/>簽核送出</label><br>
                                 <label><input type="radio" name="toDo" value="3" v-model="form.ToDoValue"/>送會其他單位</label><br>
                                 <label><input type="radio" name="toDo" value="4" v-model="form.ToDoValue"/>單位分文</label><br>
+                                <span v-show="errors.has(`Proposition:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
                         <tr>
-                            <td>簽搞併陳</td>
+                            <th>簽搞併陳</th>
                             <td colspan="7">
                                 <input type="checkbox">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)
                             </td>
                         </tr>
 
                         </tbody>
-                        <tr><td colspan="8">
+                        <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" >存草稿</btn>
-                        <btn class="btn btn-primary" @click="step++; form.Date=Date(); form.State='創稿中'">預覽</btn>
+                        <btn class="btn btn-primary" @click="next">預覽</btn>
                         <btn class="btn btn-primary" >作廢</btn>
                         </td></tr>
                     </table>
@@ -204,53 +199,53 @@
                         <tbody>
                         <tr><th colspan="8"  v-if="form.LastID!=null">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
-                            <td>簽呈號</td>
+                            <th>簽呈號</th>
                             <td colspan="3">
                             <label>{{"10700101501"}}</label>
                             </td>
-                            <td>建檔日期</td>
+                            <th>建檔日期</th>
                             <td>
                                 <label>{{form.Date}}</label>
                             </td>
-                            <td>密等</td>
+                            <th>密等</th>
                             <td>
                                 <label>{{form.Confidentiality}}</label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>簽呈字號</td>
+                            <th>簽呈字號</th>
                             <td colspan="3">
                             <label>{{"107XX簽呈字第1501號"}}</label>
                             </td>
-                            <td>限辦日期</td>
+                            <th>限辦日期</th>
                             <td>
                                 <label>{{form.LimitDate}}</label>
                             </td>
-                            <td>速別</td>
+                            <th>速別</th>
                             <td>
                                 <label>{{form.Priority}}</label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>承辦單位</td>
+                            <th>承辦單位</th>
                             <td>
                             <label>{{"資訊中心"}}</label>
                             </td>
-                            <td>承辦人員</td>
+                            <th>承辦人員</th>
                             <td>
                             <label>{{"XXX"}}</label>
                             </td>
-                            <td>歸檔日期</td>
+                            <th>歸檔日期</th>
                             <td>
                                 <label></label>
                             </td>
-                            <td>處理狀態</td>
+                            <th>處理狀態</th>
                             <td>
                                 <label>{{form.State}}</label>
                             </td>            
                         </tr>
                         <tr>
-                            <td>主旨</td>
+                            <th>主旨</th>
                             <td colspan="7">
                                 <label>{{form.Subject}}</label>
                             </td>
@@ -266,32 +261,32 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>說明</td>
+                            <th>說明</th>
                             <td colspan="7">{{form.Description}}</td>
                         </tr>
                         <tr>
-                            <td>擬辦</td>
+                            <th>擬辦</th>
                             <td colspan="7">{{form.Proposition}}</td>
                         </tr>
                         <tr>
-                            <td>簽核選項</td>
+                            <th>簽核選項</th>
                             <td colspan="7">
-                                <li v-if="form.ToDoValue == 1">代為決行</li>
-                                <li v-if="form.ToDoValue == 2">簽核送出</li>
-                                <li v-if="form.ToDoValue == 3">送會其他單位</li>
-                                <li v-if="form.ToDoValue == 4">單位分文</li>
+                                <label v-if="form.ToDoValue == 1">代為決行</label>
+                                <label v-if="form.ToDoValue == 2">簽核送出</label>
+                                <label v-if="form.ToDoValue == 3">送會其他單位</label>
+                                <label v-if="form.ToDoValue == 4">單位分文</label>
 
                             </td>
                         </tr>
                         <tr>
-                            <td>簽搞併陳</td>
+                            <th>簽搞併陳</th>
                             <td colspan="7"></td>
                         </tr>
 
                         </tbody>
-                        <tr><td colspan="8">
+                        <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="step--">取消預覽</btn>
-                        <btn class="btn btn-primary" >確定送出</btn>
+                        <btn class="btn btn-primary" @click="onSubmit">確定送出</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -327,11 +322,35 @@ export default {
         }
     },
     methods:{
-        onSubmit(){
-            this.form.step++;
-            this.form.Date=Date();
-            this.form.State='創稿中';
-            this.form.ID='1234';
+        async next(){
+            const isPass = await this.$validator.validateAll();
+
+            if(isPass!=true){
+                alert(isPass);
+                alert(JSON.stringify(this.$validator.errors.items));
+            }
+            else
+            {
+                this.step++;
+
+                if(this.step==3)
+                {
+                    this.form.Date=Date();
+                    this.form.State='創稿中';
+                    this.form.ID='1234';
+                }
+            }
+        },
+
+        async onSubmit(){
+            const isPass = await this.$validator.validateAll();
+
+            if(isPass!=true){
+                alert(isPass);
+                alert(JSON.stringify(this.$validator.errors.items));
+            }
+            else{
+            }
 
         },
     },
@@ -339,14 +358,26 @@ export default {
 </script>
 
 <style>
+    .Reminder{
+        text-align: left;
+    }
 
-    .th{
+    .error{
+        color: red;
+    }
+
+    .button{
         text-align: center;
-        padding: 15px;
+    }
+
+    th{
+        text-align: center;
+        padding-top: 15px !important;
         vertical-align: bottom;
     }
-    .td{
+    td{
         text-align: left;
         vertical-align: bottom;
+
     }
 </style>
