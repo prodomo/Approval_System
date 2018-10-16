@@ -27,36 +27,25 @@
             </div>
             <div class="box-body">
                 <div v-if="step==1">
-                    <table class="table">
+                    <table class="table table-bordered">
                         <tbody>
                         <tr><th colspan="8" class="Reminder">*簽呈未經核決單位核准前，所有人員不得擅自執行作業或送出任何文件。</th></tr>
                         <tr><th colspan="8" class="Reminder">*急件簽呈須先行作業時，請主動與核決單位聯絡，經核准才可作業。</th></tr>
                         <tr>
+                            <th>簽呈號</th>
+                            <td>
+                            <label></label>
+                            </td>
                             <th>依據收文號</th>
                             <td>
                                 <input class="form-control" type="text" placeholder="" v-model="form.LastID">
                             </td>
-                            <th rowspan="4">主辦單位</th>
-                            <td rowspan="4">
-                                <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
-                                    <option value="[資訊中心]">[資訊中心] xxx</option>
-                                    <option value="[運務部]]">[運務部] xxx</option>
-                                </select>
-                                <span v-show="errors.has(`MainDepart:required`)" class="error">{{"請選擇主辦單位"}}</span>
+                            <th>建檔日期</th>
+                            <td>
+                                <label></label>
                             </td>
-                            <th rowspan="4">速別</th>
-                            <td rowspan="4">
-                                <select class="form-control" v-model="form.Priority" name="Priority"  v-validate="'required'">
-                                    <option value="普通件">普通件</option>
-                                    <option value="速件">速件</option>
-                                    <option value="最速件">最速件</option>
-                                    <option value="特速件">特速件</option>
-                                </select>
-                                <span v-show="errors.has(`Priority:required`)" class="error">{{"請選擇速別"}}</span>
-                            </td>
-                            
-                            <th rowspan="4">密等</th>
-                            <td rowspan="4">
+                            <th>密等</th>
+                            <td>
                                 <select class="form-control" v-model="form.Confidentiality" name="Confidentiality"  v-validate="'required'">
                                     <option value="普通">普通</option>
                                     <option value="密">密</option>
@@ -67,6 +56,10 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>簽呈字號</th>
+                            <td>
+                            <label></label>
+                            </td>
                             <th>ISO管制文件</th>
                             <td>
                                 <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
@@ -74,57 +67,29 @@
                                 <label><input type="radio" name="isoValue" value="修訂" v-model="form.IsoValue"/>修訂</label>
                                 <label><input type="radio" name="isoValue" value="廢止" v-model="form.IsoValue"/>廢止</label>
                             </td>
-                        </tr>
-                        <tr>
-                            <th>主旨</th>
-                            <td colspan="7">
-                                <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
-                                <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="button">
-                        <btn class="btn btn-primary">主選單</btn>
-                        <btn class="btn btn-primary" @click="next">下一步</btn>
-                    </div>
-                </div>
-                <div v-if="step==2">
-                    <table class="table table-bordered">
-                        <tbody>
-                        <tr><th v-if="form.LastID!=null" colspan="8" class="Reminder">本文，依據{{form.LastID}}辦理</th></tr>
-                        <tr>
-                            <th>簽呈號</th>
-                            <td colspan="3">
-                            <label></label>
-                            </td>
-                            <th>建檔日期</th>
-                            <td>
-                                <label></label>
-                            </td>
-                            <th>密等</th>
-                            <td>
-                                <label>{{form.Confidentiality}}</label>
-                            </td>            
-                        </tr>
-                        <tr>
-                            <th>簽呈字號</th>
-                            <td colspan="3">
-                            <label></label>
-                            </td>
                             <th>限辦日期</th>
                             <td>
                                 <label></label>
                             </td>
                             <th>速別</th>
                             <td>
-                                <label>{{form.Priority}}</label>
+                                <select class="form-control" v-model="form.Priority" name="Priority"  v-validate="'required'">
+                                    <option value="普通件">普通件</option>
+                                    <option value="速件">速件</option>
+                                    <option value="最速件">最速件</option>
+                                    <option value="特速件">特速件</option>
+                                </select>
+                                <span v-show="errors.has(`Priority:required`)" class="error">{{"請選擇速別"}}</span>
                             </td>            
                         </tr>
                         <tr>
-                            <th>承辦單位</th>
+                            <th>主辦單位</th>
                             <td>
-                            <label>{{"xx部"}}</label>
+                                <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
+                                    <option value="[資訊中心] xxx">[資訊中心] xxx</option>
+                                    <option value="[運務部] xxx">[運務部] xxx</option>
+                                </select>
+                                <span v-show="errors.has(`MainDepart:required`)" class="error">{{"請選擇主辦單位"}}</span>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -142,15 +107,16 @@
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
-                                <label>{{form.Subject}}</label>
+                                <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
+                                <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
-                        <tr class="status-table">
+                        <tr class="table-warning">
                             <td colspan="8">
                                 <label>承辦人員   目前狀態 </label>
                             </td>
                         </tr>
-                        <tr class="status-table">
+                        <tr class="table-warning">
                             <td colspan="8">
                                 <label>單位主管   目前狀態 </label>
                             </td>
@@ -194,14 +160,18 @@
                         </td></tr>
                     </table>
                 </div>
-                <div v-if="step==3">
+                <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
                         <tr><th colspan="8"  v-if="form.LastID!=null">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
                             <th>簽呈號</th>
-                            <td colspan="3">
-                            <label>{{"10700101501"}}</label>
+                            <td colspan>
+                                <label>{{"10700101501"}}</label>
+                            </td>
+                            <th>依據收文號</th>
+                            <td colspan>
+                                <label>{{form.LastID}}</label>
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -210,12 +180,16 @@
                             <th>密等</th>
                             <td>
                                 <label>{{form.Confidentiality}}</label>
-                            </td>            
+                            </td>
                         </tr>
                         <tr>
                             <th>簽呈字號</th>
-                            <td colspan="3">
-                            <label>{{"107XX簽呈字第1501號"}}</label>
+                            <td>
+                                <label>{{"107XX簽呈字第1501號"}}</label>
+                            </td>
+                            <th>ISO管制文件</th>
+                            <td>
+                                <label>{{form.IsoValue}}</label>
                             </td>
                             <th>限辦日期</th>
                             <td>
@@ -227,9 +201,9 @@
                             </td>            
                         </tr>
                         <tr>
-                            <th>承辦單位</th>
+                            <th>主辦單位</th>
                             <td>
-                            <label>{{"資訊中心"}}</label>
+                                <label>{{form.MainDepart}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -244,18 +218,19 @@
                                 <label>{{form.State}}</label>
                             </td>            
                         </tr>
+                        
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
                                 <label>{{form.Subject}}</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
+                        <tr class="table-warning">
                             <td colspan="8">
                                 <label>承辦人員: xxx   目前狀態: xxx </label>
                             </td>
                         </tr>
-                        <tr class="status-table">
+                        <tr class="table-warning">
                             <td colspan="8">
                                 <label>單位主管: xxx   目前狀態: xxx </label>
                             </td>
@@ -323,7 +298,7 @@
 
 <script>
 export default {
-    name: 'ApprovalCreatePage',
+    name: 'ApprovalCreateSinglePage',
     data(){
         return{
             step:1,
@@ -342,7 +317,7 @@ export default {
                 Description:'',
                 Date:'',
                 LimitDate:'',
-                ToDoValue:'',
+                ToDoValue:null,
 
             }
 
@@ -360,7 +335,7 @@ export default {
             {
                 this.step++;
 
-                if(this.step==3)
+                if(this.step==2)
                 {
                     this.form.Date=Date();
                     this.form.State='創稿中';
@@ -416,6 +391,10 @@ export default {
       width: 12.5% !important; 
     }
 
+    label{
+        padding-top: 7px!important;
+    }
+
     th{
         text-align: center;
         padding-top: 15px !important;
@@ -425,9 +404,6 @@ export default {
         text-align: left;
         vertical-align: bottom;
 
-    }
-    label{
-        padding-top: 6px!important;
     }
     .status-table{
         background-color:#ffffcc ;
