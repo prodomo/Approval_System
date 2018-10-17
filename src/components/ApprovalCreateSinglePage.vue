@@ -111,12 +111,12 @@
                                 <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
-                        <tr class="table-warning">
+                        <tr class="status-table">
                             <td colspan="8">
                                 <label>承辦人員   目前狀態 </label>
                             </td>
                         </tr>
-                        <tr class="table-warning">
+                        <tr class="status-table">
                             <td colspan="8">
                                 <label>單位主管   目前狀態 </label>
                             </td>
@@ -225,12 +225,12 @@
                                 <label>{{form.Subject}}</label>
                             </td>
                         </tr>
-                        <tr class="table-warning">
+                        <tr class="status-table">
                             <td colspan="8">
                                 <label>承辦人員: xxx   目前狀態: xxx </label>
                             </td>
                         </tr>
-                        <tr class="table-warning">
+                        <tr class="status-table">
                             <td colspan="8">
                                 <label>單位主管: xxx   目前狀態: xxx </label>
                             </td>
