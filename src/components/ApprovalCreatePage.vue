@@ -158,14 +158,14 @@
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
                         <tr>
                             <th>擬辦</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`Proposition:required`)" class="error">{{"請輸入擬辦"}}</span>
                             </td>
                         </tr>
@@ -333,8 +333,8 @@ export default {
                 LastID:null,
                 ID:'',
                 MainDepart:'',
-                Priority:'',
-                Confidentiality:'',
+                Priority:'普通件',
+                Confidentiality:'普通',
                 IsoValue:'無',
                 Subject:'',
                 State:'',

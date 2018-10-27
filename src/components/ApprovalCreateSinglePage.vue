@@ -38,7 +38,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.LastID">
+                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal(1)">
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -124,14 +124,14 @@
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
                         <tr>
                             <th>擬辦</th>
                             <td colspan="7">
-                                <textarea class="form-control" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`Proposition:required`)" class="error">{{"請輸入擬辦"}}</span>
                             </td>
                         </tr>
@@ -267,12 +267,13 @@
                 </div>
             </div>
         </section>
-        <!-- <modal v-model="showModalStatus" cancel-text="取消" ok-text="送出" size="lg" :keyboard="false" :footer="false" @show="onShowModal" @hide="hideModal">
+        <div>
+        <!-- <modal v-model="showModalStatus" size="lg" :keyboard="false" :footer="false" @show="onShowModal" @hide="hideModal">
             <div>
                 <form>
                     <div class="row">請選擇來源類型:
-                        <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
-                        <label><input type="radio" name="isoValue" value="新增" v-model="form.IsoValue"/>新增</label>
+                        <label><input type="radio" name="according" value="out" v-model="form.according"/>外部</label>
+                        <label><input type="radio" name="according" value="inner" v-model="form.according"/>內部簽呈</label>
                     </div>
                     <table class="table table-bordered">
                         <thead>
@@ -291,14 +292,19 @@
                         </tbody>
                     </table>
                 </form>
+                <button class="btn btn-primary" >確認</button>
             </div>
         </modal> -->
+        </div>
+        <filing-num-modal v-model="modalParams.show"></filing-num-modal>
     </div>
 </template>
 
 <script>
+import FilingNumModal from "@/components/FilingNumModal"
 export default {
     name: 'ApprovalCreateSinglePage',
+    components:{FilingNumModal},
     data(){
         return{
             step:1,
@@ -308,8 +314,8 @@ export default {
                 LastID:null,
                 ID:'',
                 MainDepart:'',
-                Priority:'',
-                Confidentiality:'',
+                Priority:'普通件',
+                Confidentiality:'普通',
                 IsoValue:'無',
                 Subject:'',
                 State:'',
@@ -319,7 +325,11 @@ export default {
                 LimitDate:'',
                 ToDoValue:null,
 
-            }
+            },
+            modalParams: {
+                show: false,
+                rid: null
+            },
 
         }
     },
@@ -343,29 +353,9 @@ export default {
                 }
             }
         },
-
-        async onSubmit(){
-            const isPass = await this.$validator.validateAll();
-
-            if(isPass!=true){
-                alert(isPass);
-                alert(JSON.stringify(this.$validator.errors.items));
-            }
-            else{
-            }
-
-        },
-
-        async onShowModal() {
-            this.loading = true;
-            if(this.rid)
-                await this.fetchData();
-            this.loading = false;
-        },
-        
-        hideModal() {
-            // this.$emit('input', false);
-            this.resetForm();
+        showModal(id) {
+            this.modalParams.show = true;
+            this.modalParams.rid = id;
         },
     },
 }
