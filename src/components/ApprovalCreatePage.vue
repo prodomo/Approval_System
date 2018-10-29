@@ -34,7 +34,7 @@
                         <tr>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.LastID">
+                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal()">
                             </td>
                             <th rowspan="4">主辦單位</th>
                             <td rowspan="4">
@@ -188,9 +188,10 @@
 
                         </tbody>
                         <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary" >存草稿</btn>
+                        <btn class="btn btn-primary" @click="next">存草稿</btn>
                         <btn class="btn btn-primary" @click="next">預覽</btn>
-                        <btn class="btn btn-primary" >作廢</btn>
+                        <btn class="btn btn-primary" @click="reset">作廢</btn>
+                        <btn class="btn btn-primary" @click="step--">上一頁</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -318,12 +319,15 @@
                 </form>
             </div>
         </modal> -->
+        <filing-num-modal v-model="modalParams.show" @getfilingNum="getfilingNum"></filing-num-modal>
     </div>
 </template>
 
 <script>
+import FilingNumModal from "@/components/FilingNumModal"
 export default {
     name: 'ApprovalCreatePage',
+    components:{FilingNumModal},
     data(){
         return{
             step:1,
@@ -344,7 +348,13 @@ export default {
                 LimitDate:'',
                 ToDoValue:'',
 
-            }
+            },
+            modalParams: {
+                show: false,
+                rid: null
+            },
+
+
 
         }
     },
@@ -369,29 +379,30 @@ export default {
             }
         },
 
-        async onSubmit(){
-            const isPass = await this.$validator.validateAll();
-
-            if(isPass!=true){
-                alert(isPass);
-                alert(JSON.stringify(this.$validator.errors.items));
-            }
-            else{
-            }
+        async reset(){
+            this.step=1;
+            this.form.LastID=null;
+            this.form.ID='';
+            this.form.MainDepart='';
+            this.form.Priority='普通件';
+            this.form.Confidentiality='普通';
+            this.form.IsoValue='無',
+            this.form.Subject='',
+            this.form.Proposition='';
+            this.form.Description='';
+            this.form.Date='';
+            this.form.LimitDate='';
+            this.form.ToDoValue='';
 
         },
-
-        async onShowModal() {
-            this.loading = true;
-            if(this.rid)
-                await this.fetchData();
-            this.loading = false;
+        showModal() {
+            this.modalParams.show = true;
+        },
+        getfilingNum(lastid)
+        {
+            this.form.LastID=lastid;
         },
         
-        hideModal() {
-            // this.$emit('input', false);
-            this.resetForm();
-        },
     },
 }
 </script>

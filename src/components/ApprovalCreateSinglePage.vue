@@ -38,7 +38,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal(1)">
+                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal()">
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -154,9 +154,9 @@
 
                         </tbody>
                         <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary" >存草稿</btn>
+                        <btn class="btn btn-primary" @click="next">存草稿</btn>
                         <btn class="btn btn-primary" @click="next">預覽</btn>
-                        <btn class="btn btn-primary" >作廢</btn>
+                        <btn class="btn btn-primary" @click="reset">作廢</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -267,36 +267,7 @@
                 </div>
             </div>
         </section>
-        <div>
-        <!-- <modal v-model="showModalStatus" size="lg" :keyboard="false" :footer="false" @show="onShowModal" @hide="hideModal">
-            <div>
-                <form>
-                    <div class="row">請選擇來源類型:
-                        <label><input type="radio" name="according" value="out" v-model="form.according"/>外部</label>
-                        <label><input type="radio" name="according" value="inner" v-model="form.according"/>內部簽呈</label>
-                    </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">選擇</th>
-                                <th scope="col">來源收文號</th>
-                                <th scope="col">主旨</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in items">
-                                <td><option></option></td>
-                                <td>{{ item.ID }}</td>
-                                <td>{{ item.Subject }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
-                <button class="btn btn-primary" >確認</button>
-            </div>
-        </modal> -->
-        </div>
-        <filing-num-modal v-model="modalParams.show"></filing-num-modal>
+        <filing-num-modal v-model="modalParams.show" @getfilingNum="getfilingNum"></filing-num-modal>
     </div>
 </template>
 
@@ -353,10 +324,29 @@ export default {
                 }
             }
         },
-        showModal(id) {
-            this.modalParams.show = true;
-            this.modalParams.rid = id;
+        async reset(){
+            this.step=1;
+            this.form.LastID=null;
+            this.form.ID='';
+            this.form.MainDepart='';
+            this.form.Priority='普通件';
+            this.form.Confidentiality='普通';
+            this.form.IsoValue='無',
+            this.form.Subject='',
+            this.form.Proposition='';
+            this.form.Description='';
+            this.form.Date='';
+            this.form.LimitDate='';
+            this.form.ToDoValue=null;
+
         },
+        showModal() {
+            this.modalParams.show = true;
+        },
+        getfilingNum(lastid)
+        {
+            this.form.LastID=lastid;
+        }
     },
 }
 </script>
