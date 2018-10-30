@@ -293,32 +293,6 @@
                 </div>
             </div>
         </section>
-        <!-- <modal v-model="showModalStatus" cancel-text="取消" ok-text="送出" size="lg" :keyboard="false" :footer="false" @show="onShowModal" @hide="hideModal">
-            <div>
-                <form>
-                    <div class="row">請選擇來源類型:
-                        <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
-                        <label><input type="radio" name="isoValue" value="新增" v-model="form.IsoValue"/>新增</label>
-                    </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">選擇</th>
-                                <th scope="col">來源收文號</th>
-                                <th scope="col">主旨</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in items">
-                                <td><option></option></td>
-                                <td>{{ item.ID }}</td>
-                                <td>{{ item.Subject }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
-            </div>
-        </modal> -->
         <filing-num-modal v-model="modalParams.show" @getfilingNum="getfilingNum"></filing-num-modal>
     </div>
 </template>
