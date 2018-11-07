@@ -11,8 +11,8 @@
                     <navbar-nav>
                         <li class="active"><a role="button">收文查詢</a></li>
                         <li class="active"><a role="button">發文查詢</a></li>
-                        <li><a role="button">簽呈建檔</a></li>
-                        <li class="active"><a role="button">簽呈查詢</a></li>
+                        <li class="active"><a href="/02" role="button">簽呈建檔</a></li>
+                        <li ><a a href="/03" role="button">簽呈查詢</a></li>
                         <li class="active"><a role="button">公告建檔</a></li>
                         <li class="active"><a role="button">公告查詢</a></li>
                         <li class="active"><a role="button">代理人設定</a></li>
@@ -20,7 +20,7 @@
                         <li class="active"><a role="button">操作說明</a></li>
                     </navbar-nav>
                     <navbar-nav right>
-                    <li><a>您好，目前位於「公文作業畫面」</a></li>
+                    <li><a>您好，目前位於「內部簽呈畫面」</a></li>
                     </navbar-nav>
                     </template>
                 </navbar>
@@ -73,6 +73,7 @@
                         </tbody>
                     </table>
                     <br>
+                    <template v-if="items.length">
                     <table class="table filing-table">
                         <thead class="filing-table">
                         <tr>
@@ -89,7 +90,7 @@
                         <tr v-for="(item,index) in items">
                             <td>{{index}}</td>
                             <td>{{ item.date }}</td>
-                            <td>{{ item.ID}}</td>
+                            <td><a>{{ item.ID}}</a></td>
                             <td>{{ item.depart}}</td>
                             <td>{{ item.subject}}</td>
                             <td>{{ item.state}}</td>
@@ -97,6 +98,8 @@
                         </tr>
                     </tbody>
                     </table>
+                    </template>
+                        <div v-else style="color:red;">無符合條件之資料!</div>
                 </div>
             </div>
         </section>
