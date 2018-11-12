@@ -6,67 +6,47 @@
                 <div v-if="step==1">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8" class="Reminder">*簽呈未經核決單位核准前，所有人員不得擅自執行作業或送出任何文件。</th></tr>
-                        <tr><th colspan="8" class="Reminder">*急件簽呈須先行作業時，請主動與核決單位聯絡，經核准才可作業。</th></tr>
+                        <tr><th colspan="8"  v-if="form.LastID!=null">本文，依據{{form.LastID}}辦理</th></tr>
                         <tr>
                             <th>簽呈號</th>
-                            <td>
-                            <label></label>
+                            <td colspan>
+                                <label>{{"10700101501"}}</label>
                             </td>
                             <th>依據收文號</th>
-                            <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal()">
+                            <td colspan>
+                                <label>{{form.LastID}}</label>
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <label></label>
+                                <label>{{form.Date}}</label>
                             </td>
                             <th>密等</th>
                             <td>
-                                <select class="form-control" v-model="form.Confidentiality" name="Confidentiality"  v-validate="'required'">
-                                    <option value="普通">普通</option>
-                                    <option value="密">密</option>
-                                    <option value="機密">機密</option>
-                                    <option value="極機密">極機密</option>
-                                </select>
-                                <span v-show="errors.has(`Confidentiality:required`)" class="error">{{"請選擇密等"}}</span>
+                                <label>{{form.Confidentiality}}</label>
                             </td>
                         </tr>
                         <tr>
                             <th>簽呈字號</th>
                             <td>
-                            <label></label>
+                                <label>{{"107XX簽呈字第1501號"}}</label>
                             </td>
                             <th>ISO管制文件</th>
                             <td>
-                                <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
-                                <label><input type="radio" name="isoValue" value="新增" v-model="form.IsoValue"/>新增</label>
-                                <label><input type="radio" name="isoValue" value="修訂" v-model="form.IsoValue"/>修訂</label>
-                                <label><input type="radio" name="isoValue" value="廢止" v-model="form.IsoValue"/>廢止</label>
+                                <label>{{form.IsoValue}}</label>
                             </td>
                             <th>限辦日期</th>
                             <td>
-                                <label></label>
+                                <label>{{form.LimitDate}}</label>
                             </td>
                             <th>速別</th>
                             <td>
-                                <select class="form-control" v-model="form.Priority" name="Priority"  v-validate="'required'">
-                                    <option value="普通件">普通件</option>
-                                    <option value="速件">速件</option>
-                                    <option value="最速件">最速件</option>
-                                    <option value="特速件">特速件</option>
-                                </select>
-                                <span v-show="errors.has(`Priority:required`)" class="error">{{"請選擇速別"}}</span>
+                                <label>{{form.Priority}}</label>
                             </td>            
                         </tr>
                         <tr>
                             <th>主辦單位</th>
                             <td>
-                                <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
-                                    <option value="[資訊中心] xxx">[資訊中心] xxx</option>
-                                    <option value="[運務部] xxx">[運務部] xxx</option>
-                                </select>
-                                <span v-show="errors.has(`MainDepart:required`)" class="error">{{"請選擇主辦單位"}}</span>
+                                <label>{{form.MainDepart}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -78,54 +58,75 @@
                             </td>
                             <th>處理狀態</th>
                             <td>
-                                <label></label>
+                                <label>{{form.State}}</label>
                             </td>            
                         </tr>
+                        
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
-                                <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
-                                <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
-                            </td>
-                        </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>承辦人員   目前狀態 </label>
-                            </td>
-                        </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>單位主管   目前狀態 </label>
+                                <label>{{form.Subject}}</label>
                             </td>
                         </tr>
                         <tr>
                             <th>說明</th>
-                            <td colspan="7">
-                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
-                                <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
+                            <td colspan="7">{{form.Description}}</td>
+                        </tr>
+                        <tr class="status-table">
+                            <td>
+                                <label>承辦人員</label>
+                            </td>
+                            <td>
+                                <label>xxx</label>
+                            </td>
+                            <td colspan="6">
+                                <label>於2018/08/13 15:39</label><br>
+                                <label>擬辦 test2</label>
+                            </td>
+                        </tr>
+                        <tr class="status-table">
+                            <td>
+                                <label>單位主管</label>
+                            </td>
+                            <td>
+                                <label>xxx</label>
+                            </td>
+                            <td colspan="6">
+                                <label>於2018/08/13 16:12</label><br>
+                                <label>說明 test2 OK!</label>
                             </td>
                         </tr>
                         <tr>
-                            <th>擬辦</th>
+                            <th>常用詞彙</th>
                             <td colspan="7">
-                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Proposition" name="Proposition" v-validate="'required'"></textarea>
-                                <span v-show="errors.has(`Proposition:required`)" class="error">{{"請輸入擬辦"}}</span>
+                                <label><input type="checkbox" value="閱" v-model="form.words"/>閱</label>
+                                <label><input type="checkbox" value="可" v-model="form.words"/>可</label>
+                                <label><input type="checkbox" value="如擬" v-model="form.words"/>如擬</label>
+                                <label><input type="checkbox" value="存查" v-model="form.words"/>存查</label>
+                                <label><input type="checkbox" value="來說明" v-model="form.words"/>來說明</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>列管追蹤</th>
+                            <td colspan="7">
+                                <label><input type="checkbox" name="trace" value="發文公告" v-model="form.trace"/>發文公告</label>
+                                <label><input type="checkbox" name="trace" value="會議中討論" v-model="form.trace"/>會議中討論</label>
+                                <label><input type="checkbox" name="trace" value="座談會宣導" v-model="form.trace"/>座談會宣導</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>簽核內容</th>
+                            <td colspan="7">
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.words" name="Content" v-validate="'required'"></textarea>
+                                <span v-show="errors.has(`Content:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label><input type="radio" name="ToDoValue" value="代為決行" v-model="form.ToDoValue" v-validate="'required'"/>代為決行</label><br>
-                                <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="form.ToDoValue"/>簽核送出</label><br>
-                                <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="form.ToDoValue"/>送會其他單位</label><br>
-                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="form.ToDoValue"/>單位分文</label><br>
+                                <label><input type="radio" name="ToDoValue" value="退回重簽" v-model="form.ToDoValue" v-validate="'required'"/>退回重簽</label><br>
+                                <label><input type="radio" name="ToDoValue" value="決行" v-model="form.ToDoValue"/>決行</label><br>
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>簽搞併陳</th>
-                            <td colspan="7">
-                                <input type="checkbox">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)
                             </td>
                         </tr>
 
@@ -133,7 +134,6 @@
                         <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="next">存草稿</btn>
                         <btn class="btn btn-primary" @click="next">預覽</btn>
-                        <btn class="btn btn-primary" @click="reset">作廢</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -202,23 +202,33 @@
                                 <label>{{form.Subject}}</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>承辦人員: xxx   目前狀態: xxx </label>
-                            </td>
-                        </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>單位主管: xxx   目前狀態: xxx </label>
-                            </td>
-                        </tr>
                         <tr>
                             <th>說明</th>
                             <td colspan="7">{{form.Description}}</td>
                         </tr>
-                        <tr>
-                            <th>擬辦</th>
-                            <td colspan="7">{{form.Proposition}}</td>
+                        <tr class="status-table">
+                            <td>
+                                <label>承辦人員</label>
+                            </td>
+                            <td>
+                                <label>xxx</label>
+                            </td>
+                            <td colspan="6">
+                                <label>於2018/08/13 15:39</label><br>
+                                <label>擬辦 test2</label>
+                            </td>
+                        </tr>
+                        <tr class="status-table">
+                            <td>
+                                <label>單位主管</label>
+                            </td>
+                            <td>
+                                <label>xxx</label>
+                            </td>
+                            <td colspan="6">
+                                <label>於2018/08/13 15:39</label><br>
+                                <label>說明 test2 OK!</label>
+                            </td>
                         </tr>
                         <tr>
                             <th>簽核選項</th>
@@ -226,11 +236,6 @@
                                 <label>{{form.ToDoValue}}</label>
                             </td>
                         </tr>
-                        <tr>
-                            <th>簽搞併陳</th>
-                            <td colspan="7"></td>
-                        </tr>
-
                         </tbody>
                         <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="step--">取消預覽</btn>
@@ -249,7 +254,7 @@ import FilingNumModal from "@/components/FilingNumModal";
 import SystemHeader from '@/components/SystemHeader';
 
 export default {
-    name: 'ApprovalCreateSinglePage',
+    name: 'Approval',
     components:{FilingNumModal, SystemHeader},
     data(){
         return{
@@ -270,6 +275,9 @@ export default {
                 Date:'',
                 LimitDate:'',
                 ToDoValue:null,
+                words:[],
+                trace:[],
+                content:'',
 
             },
             modalParams: {
@@ -321,6 +329,10 @@ export default {
         getfilingNum(lastid)
         {
             this.form.LastID=lastid;
+        },
+        addContent(word)
+        {
+            this.form.content= this.form.content+word;
         }
     },
 }
@@ -364,6 +376,7 @@ export default {
         background-color:#ffffcc ;
     }
     .status-table>td{
-       text-align: center !important;
+       text-align: left !important;
+       padding-left: 80px !important;
     }
 </style>

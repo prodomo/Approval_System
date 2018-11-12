@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import ApprovalCreatePage from '@/components/ApprovalCreatePage'
 import ApprovalCreateSinglePage from '@/components/ApprovalCreateSinglePage'
+import Approval from '@/components/Approval'
 import ApprovalQueryPage from '@/components/ApprovalQueryPage'
 import AnnouncementCreatePage from '@/components/AnnouncementCreatePage'
 import AnnouncementQueryPage from '@/components/AnnouncementQueryPage'
@@ -37,6 +38,11 @@ export default new Router({
       path: '/05',
       name: 'AnnouncementQueryPage',
       component: AnnouncementQueryPage
+    },
+    {
+      path: '/06',
+      name: 'Approval',
+      component: Approval
     },
 
 

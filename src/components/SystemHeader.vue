@@ -12,9 +12,9 @@
                         <li class="active"><a role="button">收文查詢</a></li>
                         <li class="active"><a role="button">發文查詢</a></li>
                         <li class="active"><a href="/02" role="button">簽呈建檔</a></li>
-                        <li class="active"><a a href="/03" role="button">簽呈查詢</a></li>
-                        <li class="active"><a role="button">公告建檔</a></li>
-                        <li class="active"><a role="button">公告查詢</a></li>
+                        <li class="active"><a href="/03" role="button">簽呈查詢</a></li>
+                        <li class="active"><a href="/04" role="button">公告建檔</a></li>
+                        <li class="active"><a href="/05" role="button">公告查詢</a></li>
                         <li class="active"><a role="button">代理人設定</a></li>
                         <li class="active"><a role="button">流程示意圖</a></li>
                         <li class="active"><a role="button">操作說明</a></li>

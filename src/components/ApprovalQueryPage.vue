@@ -1,29 +1,7 @@
 <template>
     <div>
-        <section class="content-header clearfix">
-            <h1>公文系統</h1>
-        </section>
-        <section class="content">
-            <div class="box-header">
-                <navbar>
-                    <a class="navbar-brand" slot="brand" ></a>
-                    <template slot="collapse">
-                    <navbar-nav>
-                        <li class="active"><a role="button">收文查詢</a></li>
-                        <li class="active"><a role="button">發文查詢</a></li>
-                        <li class="active"><a href="/02" role="button">簽呈建檔</a></li>
-                        <li ><a a href="/03" role="button">簽呈查詢</a></li>
-                        <li class="active"><a role="button">公告建檔</a></li>
-                        <li class="active"><a role="button">公告查詢</a></li>
-                        <li class="active"><a role="button">代理人設定</a></li>
-                        <li class="active"><a role="button">流程示意圖</a></li>
-                        <li class="active"><a role="button">操作說明</a></li>
-                    </navbar-nav>
-                    <navbar-nav right>
-                    <li><a>您好，目前位於「內部簽呈畫面」</a></li>
-                    </navbar-nav>
-                    </template>
-                </navbar>
+        <system-header header="內部公文"></system-header>
+            <section class="content">
                 <div class="box-body">
                     <table class="table table-bordered">
                         <tbody>
@@ -90,10 +68,10 @@
                         <tr v-for="(item,index) in items">
                             <td>{{index}}</td>
                             <td>{{ item.date }}</td>
-                            <td><a>{{ item.ID}}</a></td>
+                            <td>{{ item.ID}}</td>
                             <td>{{ item.depart}}</td>
                             <td>{{ item.subject}}</td>
-                            <td>{{ item.state}}</td>
+                            <td><a>{{ item.state}}</a></td>
                             <td>{{ item.enddate}}</td>
                         </tr>
                     </tbody>
@@ -101,7 +79,6 @@
                     </template>
                         <div v-else style="color:red;">無符合條件之資料!</div>
                 </div>
-            </div>
         </section>
     </div>
 </template>
@@ -112,10 +89,11 @@
     import Treeselect from '@riophae/vue-treeselect';
     import '@riophae/vue-treeselect/dist/vue-treeselect.css';
     import Datepicker from 'vuejs-datepicker';
+    import SystemHeader from '@/components/SystemHeader';
 
     export default {
         name: 'ApprovalQueryPage',
-        components: {Treeselect, Datepicker},
+        components: {Treeselect, Datepicker, SystemHeader},
         data(){
             return{
                 departID:[],
