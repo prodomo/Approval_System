@@ -88,16 +88,38 @@
                                 <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
+                        <!-- <tr><td colspan="8"> -->
+                        <!-- <table  class="table table-bordered">
+                        <tbody>
                         <tr class="status-table">
-                            <td colspan="8">
-                                <label>承辦人員   目前狀態 </label>
+                            <th>
+                                <label>承辦人員</label>
+                            </th>
+                            <th>
+                                <label>xxx</label>
+                            </th>
+                            <td>
+                                <label>狀態 未處理</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>單位主管   目前狀態 </label>
-                            </td>
-                        </tr>
+                        </tbody> -->
+                        <!-- </table> -->
+                        <!-- <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>狀態 未處理</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </td></tr> -->
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
@@ -202,24 +224,43 @@
                                 <label>{{form.Subject}}</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>承辦人員: xxx   目前狀態: xxx </label>
-                            </td>
-                        </tr>
-                        <tr class="status-table">
-                            <td colspan="8">
-                                <label>單位主管: xxx   目前狀態: xxx </label>
-                            </td>
-                        </tr>
                         <tr>
                             <th>說明</th>
                             <td colspan="7">{{form.Description}}</td>
                         </tr>
-                        <tr>
-                            <th>擬辦</th>
-                            <td colspan="7">{{form.Proposition}}</td>
+                        <tr><td colspan="8">
+                        <table  class="table table-bordered">
+                        <tbody>
+                        <tr class="status-table">
+                            <th>
+                                <label>承辦人員</label>
+                            </th>
+                            <th>
+                                <label>xxx</label>
+                            </th>
+                            <td>
+                                <label>於{{form.Date}}</label><br>
+                                <label>擬辦{{form.Proposition}}</label>
+                            </td>
                         </tr>
+                        </tbody>
+                        </table>
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>狀態 未處理</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </td></tr>
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
@@ -321,7 +362,11 @@ export default {
         getfilingNum(lastid)
         {
             this.form.LastID=lastid;
-        }
+        },
+        onSubmit()
+        {
+
+        },
     },
 }
 </script>
@@ -364,6 +409,13 @@ export default {
         background-color:#ffffcc ;
     }
     .status-table>td{
-       text-align: center !important;
+       text-align: left !important;
+       padding-left: 80px !important;
+       width: 50% !important; 
+    }
+    .status-table>th{
+       text-align: left !important;
+       padding-left: 80px !important;
+       width: 2.5% !important; 
     }
 </style>

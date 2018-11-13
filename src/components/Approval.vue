@@ -61,7 +61,6 @@
                                 <label>{{form.State}}</label>
                             </td>            
                         </tr>
-                        
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
@@ -70,32 +69,83 @@
                         </tr>
                         <tr>
                             <th>說明</th>
-                            <td colspan="7">{{form.Description}}</td>
+                            <td colspan="7">
+                                <label>{{form.Description}}</label>
+                            </td>
                         </tr>
+                        <tr><td colspan="8">
+                        <table  class="table table-bordered">
+                        <tbody>
                         <tr class="status-table">
-                            <td>
+                            <th>
                                 <label>承辦人員</label>
-                            </td>
-                            <td>
+                            </th>
+                            <th>
                                 <label>xxx</label>
-                            </td>
-                            <td colspan="6">
+                            </th>
+                            <td>
                                 <label>於2018/08/13 15:39</label><br>
                                 <label>擬辦 test2</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
-                            <td>
-                                <label>單位主管</label>
-                            </td>
-                            <td>
-                                <label>xxx</label>
-                            </td>
-                            <td colspan="6">
-                                <label>於2018/08/13 16:12</label><br>
-                                <label>說明 test2 OK!</label>
-                            </td>
-                        </tr>
+                        </tbody>
+                        </table>
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>於2018/08/13 16:12</label><br>
+                                    <label>說明 test2 OK!</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>於2018/08/13 16:18</label><br>
+                                    <label>說明 test2 OK! OK!</label>
+                                </td>
+                            </tr>
+                            <tr class="status-table ">
+                                <th>
+                                    <label>總經理室主任</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td colspan="6">
+                                    <label>於2018/08/13 16:25</label><br>
+                                    <label>說明 test2 OK! OK! OK!</label>
+                                </td>
+                            </tr>
+                            <tr class="status-table ">
+                                <th>
+                                    <label>總經理</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td colspan="6">
+                                    <label>目前狀態 未處理</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </td></tr> 
                         <tr>
                             <th>常用詞彙</th>
                             <td colspan="7">
@@ -204,32 +254,84 @@
                         </tr>
                         <tr>
                             <th>說明</th>
-                            <td colspan="7">{{form.Description}}</td>
-                        </tr>
-                        <tr class="status-table">
-                            <td>
-                                <label>承辦人員</label>
-                            </td>
-                            <td>
-                                <label>xxx</label>
-                            </td>
-                            <td colspan="6">
-                                <label>於2018/08/13 15:39</label><br>
-                                <label>擬辦 test2</label>
+                            <td colspan="7">
+                                <label>{{form.Description}}</label>
                             </td>
                         </tr>
-                        <tr class="status-table">
-                            <td>
-                                <label>單位主管</label>
-                            </td>
-                            <td>
-                                <label>xxx</label>
-                            </td>
-                            <td colspan="6">
-                                <label>於2018/08/13 15:39</label><br>
-                                <label>說明 test2 OK!</label>
-                            </td>
-                        </tr>
+                        <tr><td colspan="8">
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>承辦人員</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>於2018/08/13 15:39</label><br>
+                                    <label>擬辦 test2</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>於2018/08/13 16:12</label><br>
+                                    <label>說明 test2 OK!</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>單位主管</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td>
+                                    <label>於2018/08/13 16:18</label><br>
+                                    <label>說明 test2 OK! OK!</label>
+                                </td>
+                            </tr>
+                            <tr class="status-table ">
+                                <th>
+                                    <label>總經理室主任</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td colspan="6">
+                                    <label>於2018/08/13 16:25</label><br>
+                                    <label>說明 test2 OK! OK! OK!</label>
+                                </td>
+                            </tr>
+                            <tr class="status-table ">
+                                <th>
+                                    <label>總經理</label>
+                                </th>
+                                <th>
+                                    <label>xxx</label>
+                                </th>
+                                <td colspan="6">
+                                    <label>目前狀態 未處理</label><br>
+                                    <label>{{form.words.toString()}}</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </td></tr> 
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
@@ -239,7 +341,7 @@
                         </tbody>
                         <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="step--">取消預覽</btn>
-                        <btn class="btn btn-primary" @click="onSubmit">確定送出</btn>
+                        <btn class="btn btn-primary" >確定送出</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -264,16 +366,16 @@ export default {
             form:{
                 LastID:null,
                 ID:'',
-                MainDepart:'',
+                MainDepart:'XX部',
                 Priority:'普通件',
                 Confidentiality:'普通',
                 IsoValue:'無',
-                Subject:'',
-                State:'',
+                Subject:'test2',
+                State:'送簽中',
                 Proposition:'',
-                Description:'',
-                Date:'',
-                LimitDate:'',
+                Description:'說明test2',
+                Date:'2018/05/13 15:18',
+                LimitDate:'2018/05/20',
                 ToDoValue:null,
                 words:[],
                 trace:[],
@@ -298,13 +400,6 @@ export default {
             else
             {
                 this.step++;
-
-                if(this.step==2)
-                {
-                    this.form.Date=Date();
-                    this.form.State='創稿中';
-                    this.form.ID='1234';
-                }
             }
         },
         async reset(){
@@ -378,5 +473,11 @@ export default {
     .status-table>td{
        text-align: left !important;
        padding-left: 80px !important;
+       width: 50% !important; 
+    }
+    .status-table>th{
+       text-align: left !important;
+       padding-left: 80px !important;
+       width: 2.5% !important; 
     }
 </style>

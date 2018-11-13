@@ -15,9 +15,9 @@
                         <li class="active"><a href="/03" role="button">簽呈查詢</a></li>
                         <li class="active"><a href="/04" role="button">公告建檔</a></li>
                         <li class="active"><a href="/05" role="button">公告查詢</a></li>
-                        <li class="active"><a role="button">代理人設定</a></li>
+                        <!-- <li class="active"><a role="button">代理人設定</a></li>
                         <li class="active"><a role="button">流程示意圖</a></li>
-                        <li class="active"><a role="button">操作說明</a></li>
+                        <li class="active"><a role="button">操作說明</a></li> -->
                     </navbar-nav>
                     <navbar-nav right>
                     <li><a>您好，目前位於「{{this.header}}畫面」</a></li>
