@@ -15,8 +15,8 @@
                             <th><input type="text" v-model="form.index"></th>
                             <th>簽呈號:</th>
                             <th><input type="text" v-model="form.filingNum"></th>
-                            <th>經辦人員編:</th>
-                            <th><input type="text" v-model="form.personID"></th>
+                            <th>承辦人員:</th>
+                            <th><input type="text" v-model="form.personID" placeholder="請輸入姓名或工號"></th>
                         </tr>
                         <tr>
                             <th>送簽日期:</th>
@@ -58,6 +58,7 @@
                             <th scope="col">序號</th>
                             <th scope="col">送簽日期</th>
                             <th scope="col">簽呈號</th>
+                            <th scope="col">承辦人</th>
                             <th scope="col">主辦單位</th>
                             <th scope="col">主旨</th>
                             <th scope="col">狀態</th>
@@ -69,6 +70,7 @@
                             <td>{{index}}</td>
                             <td>{{ item.date }}</td>
                             <td>{{ item.ID}}</td>
+                            <td>{{ item.person}}</td>
                             <td>{{ item.depart}}</td>
                             <td>{{ item.subject}}</td>
                             <td><a>{{ item.state}}</a></td>
@@ -112,8 +114,8 @@
                     date:Date(),
                 },
                 items:[
-                    {ID:"1234", date:'2018-09-12', depart:'運務部', subject:"test1" , state:'送簽中', enddate:''},
-                    {ID:"4569", date:'2018-09-15', depart:'運務部', subject:"test2" , state:'送簽中', enddate:''},
+                    {ID:"1234", date:'2018-09-12', depart:'運務部', person:'王XX' ,subject:"test1" , state:'送簽中', enddate:''},
+                    {ID:"4569", date:'2018-09-15', depart:'運務部', person:'陳XX', subject:"test2" , state:'送簽中', enddate:''},
                 ]
 
 
