@@ -6,6 +6,7 @@ import router from './router';
 import * as uiv from 'uiv';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VeeValidate from 'vee-validate';
+import store from './vuex/store.js';
 
 Vue.config.productionTip = false;
 Vue.use(uiv);
@@ -15,6 +16,7 @@ Vue.use(VeeValidate);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
