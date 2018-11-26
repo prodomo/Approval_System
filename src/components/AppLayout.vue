@@ -1,6 +1,6 @@
 <template>
     <div>
-        <system-header></system-header>
+        <!-- <system-header></system-header> -->
     </div>
 </template>
 

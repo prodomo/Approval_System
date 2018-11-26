@@ -32,6 +32,11 @@ export default new Router({
       },
       component:AppLayout,
       children:[
+        // {
+        //   path: '/',
+        //   name: 'AppLayout',
+        //   component: AppLayout
+        // },
         {
           path: '/01',
           name: 'ApprovalCreatePage',
@@ -62,7 +67,7 @@ export default new Router({
           name: 'Approval',
           component: Approval
         },
-      ]
-    }
+    ]
+  }
   ]
 })

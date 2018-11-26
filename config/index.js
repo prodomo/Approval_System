@@ -13,12 +13,13 @@ module.exports = {
     proxyTable: {
       // proxy all requests starting with /api to jsonplaceholder
       '/api': {
-          // target: 'http://58.114.87.113:8092',
-          target: 'http://localhost:16789',
+          target: 'http://58.114.87.113:8092',
+          // target: 'http://localhost:16789',
           changeOrigin: true
       },
       '/oauth2': {
           target: 'http://58.114.87.113:8092',
+          // target: 'http://localhost:16789',
           changeOrigin: true
       }
     },

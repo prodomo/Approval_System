@@ -7,10 +7,14 @@ import * as uiv from 'uiv';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VeeValidate from 'vee-validate';
 import store from './vuex/store.js';
+import axios from 'axios';
+import VueLocalStorage from 'vue-localstorage';
+import '@/lib/mixin';
 
 Vue.config.productionTip = false;
 Vue.use(uiv);
 Vue.use(VeeValidate);
+Vue.use(VueLocalStorage);
 
 /* eslint-disable no-new */
 new Vue({
@@ -20,3 +24,7 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+const accessToken = Vue.localStorage.get('access_token');
+axios.defaults.headers.common['Authorization'] = `bearer ${accessToken}`;
+

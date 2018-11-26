@@ -81,10 +81,12 @@
                         axios.defaults.headers.common['Authorization'] = `bearer ${data.access_token}`;
                         this.$localStorage.set('access_token', data.access_token);
                         await this.syncUser();
-                        this.$router.push(`/permissionTypes`);
+                        this.$router.push(`/02`);
                     }
                 } catch(err) {
+                    alert(err.message);
                     if(err.response.status == 400) {
+                        
                         this.$toast.error({
                             title: '錯誤訊息',
                             message: '登入失敗'
