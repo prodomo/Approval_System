@@ -1,6 +1,6 @@
 <template>
     <div>
-        <system-header header="公文作業" ID=3></system-header>
+        <system-header header="公文作業" ID=approvalCreate title="簽呈建檔"></system-header>
         <section class="content">
             <div class="box-body">
                 <div v-if="step==1">

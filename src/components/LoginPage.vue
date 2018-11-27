@@ -1,7 +1,7 @@
 <template>
     <div class="login-page">
         <div class="login-box">
-            <div class="login-logo">權限管理系統</div>
+            <div class="login-logo">員工專區</div>
             <div class="login-box-body">
                 <p class="login-box-msg">填寫帳密，並點擊登入</p>
                 <form novalidate @submit.prevent="login">
@@ -81,7 +81,7 @@
                         axios.defaults.headers.common['Authorization'] = `bearer ${data.access_token}`;
                         this.$localStorage.set('access_token', data.access_token);
                         await this.syncUser();
-                        this.$router.push(`/02`);
+                        this.$router.push(`/approvalCreate`);
                     }
                 } catch(err) {
                     alert(err.message);

@@ -1,0 +1,16 @@
+body, #app{
+  min-height:       100%;
+  background-color: #F6F6F6;
+  font-family:      "Microsoft JhengHei", serif;
+}
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6{
+  font-family: "Microsoft JhengHei", serif !important;
+  margin:      0;
+}
+.main-header .logo{
+  font-family: "Microsoft JhengHei", serif;
+}
+.error{
+  color: red;
+}

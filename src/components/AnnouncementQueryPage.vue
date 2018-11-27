@@ -1,6 +1,6 @@
 <template>
     <div>
-        <system-header header="內部公文"></system-header>
+        <system-header header="內部公文" ID=announcementQuery title="公告查詢"></system-header>
         <section class="content">
             <table class="table table-bordered">
                 <tbody>

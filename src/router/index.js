@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import ApprovalCreatePage from '@/components/ApprovalCreatePage'
 import ApprovalCreateSinglePage from '@/components/ApprovalCreateSinglePage'
 import Approval from '@/components/Approval'
 import ApprovalQueryPage from '@/components/ApprovalQueryPage'
@@ -32,33 +31,23 @@ export default new Router({
       },
       component:AppLayout,
       children:[
-        // {
-        //   path: '/',
-        //   name: 'AppLayout',
-        //   component: AppLayout
-        // },
         {
-          path: '/01',
-          name: 'ApprovalCreatePage',
-          component: ApprovalCreatePage
-        },
-        {
-          path: '/02',
+          path: '/approvalCreate',
           name: 'ApprovalCreateSinglePage',
           component: ApprovalCreateSinglePage
         },
         {
-          path: '/03',
+          path: '/approvalQuery',
           name: 'ApprovalQueryPage',
           component: ApprovalQueryPage
         },
         {
-          path: '/04',
+          path: '/announcementCreate',
           name: 'AnnouncementCreatePage',
           component: AnnouncementCreatePage
         },
         {
-          path: '/05',
+          path: '/announcementQuery',
           name: 'AnnouncementQueryPage',
           component: AnnouncementQueryPage
         },

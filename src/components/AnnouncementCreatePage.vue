@@ -1,6 +1,6 @@
 <template>
     <div>
-        <system-header header="公文作業"></system-header>
+        <system-header header="公文作業" ID=announcementCreate title="公告建檔"></system-header>
         <section class="content">
              <div class="box-body">
                  <table class="table">

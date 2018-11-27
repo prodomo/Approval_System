@@ -1,6 +1,6 @@
 <template>
     <div>
-        <system-header header="內部公文"></system-header>
+        <system-header header="內部公文" ID=approvalQuery title="簽呈查詢"></system-header>
             <section class="content">
                 <div class="box-body">
                     <table class="table table-bordered">
