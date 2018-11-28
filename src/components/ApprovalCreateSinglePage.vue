@@ -15,7 +15,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.LastID" @click="showModal()">
+                                <input class="form-control" type="text" placeholder="" v-model="form.ReferencePetitionId" @click="showModal()">
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -23,13 +23,13 @@
                             </td>
                             <th>密等</th>
                             <td>
-                                <select class="form-control" v-model="form.Confidentiality" name="Confidentiality"  v-validate="'required'">
-                                    <option value="普通">普通</option>
-                                    <option value="密">密</option>
-                                    <option value="機密">機密</option>
-                                    <option value="極機密">極機密</option>
+                                <select class="form-control" v-model="form.SecretLevelId" name="SecretLevelId"  v-validate="'required'">
+                                    <option value=1>普通</option>
+                                    <option value=2>密</option>
+                                    <option value=3>機密</option>
+                                    <option value=4>極機密</option>
                                 </select>
-                                <span v-show="errors.has(`Confidentiality:required`)" class="error">{{"請選擇密等"}}</span>
+                                <span v-show="errors.has(`SecretLevelId:required`)" class="error">{{"請選擇密等"}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -39,10 +39,10 @@
                             </td>
                             <th>ISO管制文件</th>
                             <td>
-                                <label><input type="radio" name="isoValue" value="無" v-model="form.IsoValue"/>無</label>
-                                <label><input type="radio" name="isoValue" value="新增" v-model="form.IsoValue"/>新增</label>
-                                <label><input type="radio" name="isoValue" value="修訂" v-model="form.IsoValue"/>修訂</label>
-                                <label><input type="radio" name="isoValue" value="廢止" v-model="form.IsoValue"/>廢止</label>
+                                <label><input type="radio" name="ISOTypeId"  v-model="form.ISOTypeId"/>無</label>
+                                <label><input type="radio" name="ISOTypeId" value=1 v-model="form.ISOTypeId"/>新增</label>
+                                <label><input type="radio" name="ISOTypeId" value=2 v-model="form.ISOTypeId"/>修訂</label>
+                                <label><input type="radio" name="ISOTypeId" value=3 v-model="form.ISOTypeId"/>廢止</label>
                             </td>
                             <th>限辦日期</th>
                             <td>
@@ -50,19 +50,19 @@
                             </td>
                             <th>速別</th>
                             <td>
-                                <select class="form-control" v-model="form.Priority" name="Priority"  v-validate="'required'">
-                                    <option value="普通件">普通件</option>
-                                    <option value="速件">速件</option>
-                                    <option value="最速件">最速件</option>
-                                    <option value="特速件">特速件</option>
+                                <select class="form-control" v-model="form.PriorityId" name="PriorityId"  v-validate="'required'">
+                                    <option value=1>普通件</option>
+                                    <option value=2>速件</option>
+                                    <option value=3>最速件</option>
+                                    <option value=3>特速件</option>
                                 </select>
-                                <span v-show="errors.has(`Priority:required`)" class="error">{{"請選擇速別"}}</span>
+                                <span v-show="errors.has(`PriorityId:required`)" class="error">{{"請選擇速別"}}</span>
                             </td>            
                         </tr>
                         <tr>
                             <th>主辦單位</th>
                             <td>
-                                <select class="form-control" v-model="form.MainDepart" name="MainDepart"  v-validate="'required'">
+                                <select class="form-control" v-model="showForm.MainDepart" name="MainDepart"  v-validate="'required'">
                                     <option value="[資訊中心] xxx">[資訊中心] xxx</option>
                                     <option value="[運務部] xxx">[運務部] xxx</option>
                                 </select>
@@ -84,8 +84,8 @@
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
-                                <input class="form-control" type="text" placeholder="" v-model="form.Subject" name="Subject" v-validate="'required'">
-                                <span v-show="errors.has(`Subject:required`)" class="error">{{"請輸入主旨"}}</span>
+                                <input class="form-control" type="text" placeholder="" v-model="form.Purport" name="Purport" v-validate="'required'">
+                                <span v-show="errors.has(`Purport:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
                         <!-- <tr><td colspan="8"> -->
@@ -123,7 +123,7 @@
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
-                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.Description" name="Description" v-validate="'required'"></textarea>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="showForm.Description" name="Description" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
@@ -137,10 +137,10 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label><input type="radio" name="ToDoValue" value="代為決行" v-model="form.ToDoValue" v-validate="'required'"/>代為決行</label><br>
-                                <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="form.ToDoValue"/>簽核送出</label><br>
-                                <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="form.ToDoValue"/>送會其他單位</label><br>
-                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="form.ToDoValue"/>單位分文</label><br>
+                                <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
+                                <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="showForm.ToDoValue"/>簽核送出</label><br>
+                                <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="showForm.ToDoValue"/>送會其他單位</label><br>
+                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="showForm.ToDoValue"/>單位分文</label><br>
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
@@ -162,23 +162,23 @@
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8"  v-if="form.LastID!=null">本文，依據{{form.LastID}}辦理</th></tr>
+                        <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{form.ReferencePetitionId}}辦理</th></tr>
                         <tr>
                             <th>簽呈號</th>
                             <td colspan>
-                                <label>{{"10700101501"}}</label>
+                                <label>{{form.Number}}</label>
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <label>{{form.LastID}}</label>
+                                <label>{{form.ReferencePetitionId}}</label>
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <label>{{form.Date}}</label>
+                                <label>{{showForm.Date}}</label>
                             </td>
                             <th>密等</th>
                             <td>
-                                <label>{{form.Confidentiality}}</label>
+                                <label>{{textForm.Confidentiality}}</label>
                             </td>
                         </tr>
                         <tr>
@@ -188,21 +188,21 @@
                             </td>
                             <th>ISO管制文件</th>
                             <td>
-                                <label>{{form.IsoValue}}</label>
+                                <label>{{textForm.IsoValue}}</label>
                             </td>
                             <th>限辦日期</th>
                             <td>
-                                <label>{{form.LimitDate}}</label>
+                                <label>{{showForm.LimitDate}}</label>
                             </td>
                             <th>速別</th>
                             <td>
-                                <label>{{form.Priority}}</label>
+                                <label>{{textForm.priority}}</label>
                             </td>            
                         </tr>
                         <tr>
                             <th>主辦單位</th>
                             <td>
-                                <label>{{form.MainDepart}}</label>
+                                <label>{{showForm.MainDepart}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -210,23 +210,25 @@
                             </td>
                             <th>歸檔日期</th>
                             <td>
-                                <label></label>
+                                <label>{{form.ArchiveDate}}</label>
                             </td>
                             <th>處理狀態</th>
                             <td>
-                                <label>{{form.State}}</label>
+                                <label>{{textForm.status}}</label>
                             </td>            
                         </tr>
                         
                         <tr>
                             <th>主旨</th>
                             <td colspan="7">
-                                <label>{{form.Subject}}</label>
+                                <label>{{form.Purport}}</label>
                             </td>
                         </tr>
                         <tr>
                             <th>說明</th>
-                            <td colspan="7">{{form.Description}}</td>
+                            <td colspan="7">
+                                <label>{{showForm.Description}}</label>
+                            </td>
                         </tr>
                         <tr><td colspan="8">
                         <table  class="table table-bordered">
@@ -239,7 +241,7 @@
                                 <label>xxx</label>
                             </th>
                             <td>
-                                <label>於{{form.Date}}</label><br>
+                                <label>於{{showForm.Date}}</label><br>
                                 <label>擬辦{{form.Proposition}}</label>
                             </td>
                         </tr>
@@ -264,7 +266,7 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{form.ToDoValue}}</label>
+                                <label>{{showForm.ToDoValue}}</label>
                             </td>
                         </tr>
                         <tr>
@@ -288,6 +290,8 @@
 <script>
 import FilingNumModal from "@/components/FilingNumModal";
 import SystemHeader from '@/components/SystemHeader';
+import axios from 'axios';
+import _ from 'lodash';
 
 export default {
     name: 'ApprovalCreateSinglePage',
@@ -297,26 +301,37 @@ export default {
             step:1,
             items:[],
             showModalStatus: false,
+            sending: false,
             form:{
-                LastID:null,
-                ID:'',
-                MainDepart:'',
-                Priority:'普通件',
-                Confidentiality:'普通',
-                IsoValue:'無',
-                Subject:'',
-                State:'',
+                ReferencePetitionId:null,
+                Number:'',
+                PriorityId:1,
+                SecretLevelId:1,
+                ISOTypeId:null,               
+                ArchiveDate:null,
+                Purport:'',
                 Proposition:'',
-                Description:'',
+                LayerOptionId:1,
+            },
+            showForm:{
+                MainDepart:'',
+                State:'',
                 Date:'',
                 LimitDate:'',
                 ToDoValue:null,
-
+                Description:'',
             },
             modalParams: {
                 show: false,
                 rid: null
             },
+            textForm:
+            {
+                priority:'普通件',
+                Confidentiality:'普通',
+                IsoValue:'無',
+                status:'',
+            }
 
         }
     },
@@ -334,38 +349,118 @@ export default {
 
                 if(this.step==2)
                 {
-                    this.form.Date=Date();
-                    this.form.State='創稿中';
-                    this.form.ID='1234';
+                    this.showForm.Date=Date();
+                    this.textForm.status='創稿中';
+                    this.form.Number='123';
+                    this.setPriorityText();
+                    this.setConfidentialityText();
+                    this.setISOText();
                 }
             }
         },
         async reset(){
             this.step=1;
-            this.form.LastID=null;
-            this.form.ID='';
-            this.form.MainDepart='';
-            this.form.Priority='普通件';
-            this.form.Confidentiality='普通';
-            this.form.IsoValue='無',
-            this.form.Subject='',
+            this.form.ReferencePetitionId=null;
+            this.form.Number='';
+            this.showForm.MainDepart='';
+            this.form.PriorityId=1;
+            this.form.SecretLevelId=1;
+            this.form.ISOTypeId=null;
+            this.form.Purport='',
             this.form.Proposition='';
-            this.form.Description='';
-            this.form.Date='';
-            this.form.LimitDate='';
-            this.form.ToDoValue=null;
-
+            this.showForm.Description='';
+            this.showForm.Date='';
+            this.showForm.LimitDate='';
+            this.showForm.ToDoValue=null;
+            this.form.LayerOptionId=1;
         },
         showModal() {
             this.modalParams.show = true;
         },
         getfilingNum(lastid)
         {
-            this.form.LastID=lastid;
+            this.form.ReferencePetitionId=lastid;
         },
-        onSubmit()
+        async onSubmit()
         {
+            let res = null;
+            // const isPass = await this.$validator.validateAll();
+            // if(isPass!=true){
+            //     alert(isPass);
+            //     alert(JSON.stringify(this.$validator.errors.items));
+            //     return;
+            // }
+            // else
+            // {
+                this.sending = true;
+                try{
+                    const form = _.cloneDeep(this.form);
+                    res = await axios.post(`/api/Petitions`, form);
 
+                    res = res.data;
+                    if(res.Status == 0) {
+                        this.$toast.success({
+                            title: '成功訊息',
+                            message: '創建成功'
+                            });
+                        this.reset();
+                    }
+                }
+                catch(err)
+                {
+                    alert(err.message);
+                }
+                
+            // }
+
+        },
+        setPriorityText()
+        {
+            if (this.form.PriorityId==1)
+                this.textForm.priority='普通';
+
+            else if (this.form.PriorityId==2)
+                this.textForm.priority='速件';
+
+            else if (this.form.PriorityId==3)
+                this.textForm.priority='最速件';
+
+            else if (this.form.PriorityId==4)
+                this.textForm.priority='特素件';
+            
+            // return this.textForm.priority;
+        },
+        setConfidentialityText()
+        {
+            if (this.form.SecretLevelId==1)
+                this.textForm.Confidentiality='普通';
+
+            else if (this.form.SecretLevelId==2)
+                this.textForm.Confidentiality='速件';
+
+            else if (this.form.SecretLevelId==3)
+                this.textForm.Confidentiality='最速件';
+
+            else if (this.form.SecretLevelId==4)
+                this.textForm.Confidentiality='特素件';
+            
+            // return this.textForm.Confidentiality;
+        },
+        setISOText()
+        {
+            if (this.form.ISOTypeId ==1)
+                this.textForm.IsoValue='普通';
+
+            else if (this.form.ISOTypeId ==2)
+                this.textForm.IsoValue='速件';
+
+            else if (this.form.ISOTypeId ==3)
+                this.textForm.IsoValue='最速件';
+
+            else if (this.form.ISOTypeId ==4)
+                this.textForm.IsoValue='特素件';
+            
+            // return this.textForm.IsoValue;
         },
     },
 }
