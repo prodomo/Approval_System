@@ -174,7 +174,7 @@
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <label>{{showForm.Date}}</label>
+                                <label>{{datetime(showForm.Date)}}</label>
                             </td>
                             <th>密等</th>
                             <td>
@@ -192,7 +192,9 @@
                             </td>
                             <th>限辦日期</th>
                             <td>
-                                <label>{{showForm.LimitDate}}</label>
+                                <div v-if="form.LimitDate!=null">
+                                    <label>{{datetime(showForm.LimitDate)}}</label>
+                                </div>
                             </td>
                             <th>速別</th>
                             <td>
@@ -210,7 +212,9 @@
                             </td>
                             <th>歸檔日期</th>
                             <td>
-                                <label>{{form.ArchiveDate}}</label>
+                                <div v-if="form.ArchiveDate!=null">
+                                    <label >{{datetime(form.ArchiveDate)}}</label>
+                                </div>
                             </td>
                             <th>處理狀態</th>
                             <td>
@@ -241,7 +245,7 @@
                                 <label>xxx</label>
                             </th>
                             <td>
-                                <label>於{{showForm.Date}}</label><br>
+                                <label>於{{datetime(showForm.Date)}}</label><br>
                                 <label>擬辦{{form.Proposition}}</label>
                             </td>
                         </tr>
@@ -277,7 +281,7 @@
                         </tbody>
                         <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="step--">取消預覽</btn>
-                        <btn class="btn btn-primary" @click="onSubmit">確定送出</btn>
+                        <btn class="btn btn-primary" @click="getData">確定送出</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -299,6 +303,7 @@ export default {
     data(){
         return{
             step:1,
+            apID:null,
             items:[],
             showModalStatus: false,
             sending: false,
@@ -311,7 +316,7 @@ export default {
                 ArchiveDate:null,
                 Purport:'',
                 Proposition:'',
-                LayerOptionId:1,
+                LayerOptionId:null,
             },
             showForm:{
                 MainDepart:'',
@@ -349,12 +354,12 @@ export default {
 
                 if(this.step==2)
                 {
-                    this.showForm.Date=Date();
-                    this.textForm.status='創稿中';
-                    this.form.Number='123';
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
+                    this.form.Number='123';
+                    this.save();
+                    this.textForm.status='創稿中';
                 }
             }
         },
@@ -372,7 +377,8 @@ export default {
             this.showForm.Date='';
             this.showForm.LimitDate='';
             this.showForm.ToDoValue=null;
-            this.form.LayerOptionId=1;
+            this.form.LayerOptionId=null;
+            this.apID=null;
         },
         showModal() {
             this.modalParams.show = true;
@@ -381,38 +387,70 @@ export default {
         {
             this.form.ReferencePetitionId=lastid;
         },
+        async save()
+        {
+            let res = null;
+            this.sending = true;
+            try{
+                const form = _.cloneDeep(this.form);
+
+                if(!this.apID)
+                {
+                    res = await axios.post(`/api/Petitions`, form);
+                }
+                else
+                {
+                    res = await axios.put(`/api/Petitions/${this.apID}`, form);
+                }
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+
+                    this.showForm.Date = data.Row.CreatedAt;
+                    this.form.ArchiveDate = data.Row.ArchiveDate;
+                    this.apID= data.Row.Id;
+                    this.form.Number = this.apID;
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+
+        },
         async onSubmit()
         {
             let res = null;
-            // const isPass = await this.$validator.validateAll();
-            // if(isPass!=true){
-            //     alert(isPass);
-            //     alert(JSON.stringify(this.$validator.errors.items));
-            //     return;
-            // }
-            // else
-            // {
-                this.sending = true;
-                try{
-                    const form = _.cloneDeep(this.form);
-                    res = await axios.post(`/api/Petitions`, form);
+            this.sending = true;
+            this.form.LayerOptionId=1;
+            try{
+                const form = _.cloneDeep(this.form);
 
-                    res = res.data;
-                    if(res.Status == 0) {
-                        this.$toast.success({
-                            title: '成功訊息',
-                            message: '創建成功'
-                            });
-                        this.reset();
-                    }
-                }
-                catch(err)
+                if(!this.apID)
                 {
-                    alert(err.message);
+                    res = await axios.post(`/api/Petitions`, form);
                 }
-                
-            // }
-
+                else
+                {
+                    res = await axios.put(`/api/Petitions/${this.apID}`, form);
+                }
+                res = res.data;
+                if(res.Status==0)
+                {
+                    this.$toast.success({
+                        title: '成功訊息',
+                        message: '送出成功'
+                        });
+                    this.reset();
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
         },
         setPriorityText()
         {
@@ -427,8 +465,6 @@ export default {
 
             else if (this.form.PriorityId==4)
                 this.textForm.priority='特素件';
-            
-            // return this.textForm.priority;
         },
         setConfidentialityText()
         {
@@ -444,7 +480,6 @@ export default {
             else if (this.form.SecretLevelId==4)
                 this.textForm.Confidentiality='特素件';
             
-            // return this.textForm.Confidentiality;
         },
         setISOText()
         {
@@ -459,8 +494,6 @@ export default {
 
             else if (this.form.ISOTypeId ==4)
                 this.textForm.IsoValue='特素件';
-            
-            // return this.textForm.IsoValue;
         },
     },
 }
