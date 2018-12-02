@@ -166,7 +166,7 @@
                         <tr>
                             <th>簽呈號</th>
                             <td colspan>
-                                <label>{{form.Number}}</label>
+                                <label>{{showForm.showNumber}}</label>
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
@@ -184,7 +184,7 @@
                         <tr>
                             <th>簽呈字號</th>
                             <td>
-                                <label>{{"107XX簽呈字第1501號"}}</label>
+                                <label>{{showForm.showNumberText}}</label>
                             </td>
                             <th>ISO管制文件</th>
                             <td>
@@ -281,7 +281,7 @@
                         </tbody>
                         <tr><td colspan="8" class="button">
                         <btn class="btn btn-primary" @click="step--">取消預覽</btn>
-                        <btn class="btn btn-primary" @click="getData">確定送出</btn>
+                        <btn class="btn btn-primary" @click="onSubmit">確定送出</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -309,7 +309,7 @@ export default {
             sending: false,
             form:{
                 ReferencePetitionId:null,
-                Number:'',
+                PetitionNumberId:null,
                 PriorityId:1,
                 SecretLevelId:1,
                 ISOTypeId:null,               
@@ -325,6 +325,8 @@ export default {
                 LimitDate:'',
                 ToDoValue:null,
                 Description:'',
+                showNumberText:null,
+                showNumber:null,
             },
             modalParams: {
                 show: false,
@@ -357,7 +359,6 @@ export default {
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
-                    this.form.Number='123';
                     this.save();
                     this.textForm.status='創稿中';
                 }
@@ -366,7 +367,7 @@ export default {
         async reset(){
             this.step=1;
             this.form.ReferencePetitionId=null;
-            this.form.Number='';
+            this.form.PetitionNumberId=null;
             this.showForm.MainDepart='';
             this.form.PriorityId=1;
             this.form.SecretLevelId=1;
@@ -379,6 +380,7 @@ export default {
             this.showForm.ToDoValue=null;
             this.form.LayerOptionId=null;
             this.apID=null;
+            this.showForm.showNumberText=null;
         },
         showModal() {
             this.modalParams.show = true;
@@ -392,14 +394,25 @@ export default {
             let res = null;
             this.sending = true;
             try{
-                const form = _.cloneDeep(this.form);
-
                 if(!this.apID)
                 {
+                    res = await axios.post(`/api/PetitionNumbers`);
+                    res = res.data;
+
+                    if(res.Status==0)
+                    {
+                        const data = res.Data;
+                        this.form.PetitionNumberId = data.Row[0].Id;
+                        this.showForm.showNumber = data.Row[0].showNumber;
+                        this.showForm.showNumberText =  data.Row[0].showNumberText;
+                    }
+
+                    const form = _.cloneDeep(this.form);
                     res = await axios.post(`/api/Petitions`, form);
                 }
                 else
                 {
+                    const form = _.cloneDeep(this.form);
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
                 }
                 res = res.data;
@@ -409,8 +422,7 @@ export default {
 
                     this.showForm.Date = data.Row.CreatedAt;
                     this.form.ArchiveDate = data.Row.ArchiveDate;
-                    this.apID= data.Row.Id;
-                    this.form.Number = this.apID;
+                    this.apID = data.Row.Id;
                 }
             }
             catch(err)
