@@ -13,7 +13,7 @@ import beforeEach from '@/router/beforeEach';
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode:'history',
   routes: [
     {
@@ -59,4 +59,8 @@ export default new Router({
     ]
   }
   ]
-})
+});
+
+router.beforeEach(beforeEach);
+
+export default router;

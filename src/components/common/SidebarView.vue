@@ -3,7 +3,7 @@
         <section class="sidebar">
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">主選單</li>
-                <li  :class="{active: ($route.path.match(/\/approvalCreate(\/\d*?|.{0})/))}">
+                <li class="treeview" :class="{active: ($route.path.match(/\/approvalCreate(\/\d*?|.{0})/))}">
                     <router-link to="/approvalCreate">
                         <i class="fa fa-lock"></i>
                         <span>公文系統</span>

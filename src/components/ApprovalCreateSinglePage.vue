@@ -63,14 +63,13 @@
                             <th>主辦單位</th>
                             <td>
                                 <select class="form-control" v-model="showForm.MainDepart" name="MainDepart"  v-validate="'required'">
-                                    <option value="[資訊中心] xxx">[資訊中心] xxx</option>
-                                    <option value="[運務部] xxx">[運務部] xxx</option>
+                                    <option v-for="item in chief" :value="item">{{item.Department}} {{item.User}}</option>
                                 </select>
                                 <span v-show="errors.has(`MainDepart:required`)" class="error">{{"請選擇主辦單位"}}</span>
                             </td>
                             <th>承辦人員</th>
                             <td>
-                            <label>{{"XXX"}}</label>
+                            <label>{{userName}}</label>
                             </td>
                             <th>歸檔日期</th>
                             <td>
@@ -88,38 +87,6 @@
                                 <span v-show="errors.has(`Purport:required`)" class="error">{{"請輸入主旨"}}</span>
                             </td>
                         </tr>
-                        <!-- <tr><td colspan="8"> -->
-                        <!-- <table  class="table table-bordered">
-                        <tbody>
-                        <tr class="status-table">
-                            <th>
-                                <label>承辦人員</label>
-                            </th>
-                            <th>
-                                <label>xxx</label>
-                            </th>
-                            <td>
-                                <label>狀態 未處理</label>
-                            </td>
-                        </tr>
-                        </tbody> -->
-                        <!-- </table> -->
-                        <!-- <table  class="table table-bordered">
-                            <tbody>
-                            <tr class="status-table">
-                                <th>
-                                    <label>單位主管</label>
-                                </th>
-                                <th>
-                                    <label>xxx</label>
-                                </th>
-                                <td>
-                                    <label>狀態 未處理</label>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        </td></tr> -->
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
@@ -174,7 +141,7 @@
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <label>{{datetime(showForm.Date)}}</label>
+                                <label>{{date(showForm.Date)}}</label>
                             </td>
                             <th>密等</th>
                             <td>
@@ -192,8 +159,8 @@
                             </td>
                             <th>限辦日期</th>
                             <td>
-                                <div v-if="form.LimitDate!=null">
-                                    <label>{{datetime(showForm.LimitDate)}}</label>
+                                <div v-if="showForm.LimitedDate!=null">
+                                    <label>{{date(showForm.LimitedDate)}}</label>
                                 </div>
                             </td>
                             <th>速別</th>
@@ -202,18 +169,18 @@
                             </td>            
                         </tr>
                         <tr>
-                            <th>主辦單位</th>
+                            <th>承辦單位</th>
                             <td>
-                                <label>{{showForm.MainDepart}}</label>
+                                <label>{{showForm.MainDepart.Department}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
-                            <label>{{"XXX"}}</label>
+                            <label>{{userName}}</label>
                             </td>
                             <th>歸檔日期</th>
                             <td>
                                 <div v-if="form.ArchiveDate!=null">
-                                    <label >{{datetime(form.ArchiveDate)}}</label>
+                                    <label >{{date(form.ArchiveDate)}}</label>
                                 </div>
                             </td>
                             <th>處理狀態</th>
@@ -242,10 +209,10 @@
                                 <label>承辦人員</label>
                             </th>
                             <th>
-                                <label>xxx</label>
+                                <label>{{userName}}</label>
                             </th>
                             <td>
-                                <label>於{{datetime(showForm.Date)}}</label><br>
+                                <label>於{{date(showForm.Date)}}</label><br>
                                 <label>擬辦{{form.Proposition}}</label>
                             </td>
                         </tr>
@@ -258,7 +225,7 @@
                                     <label>單位主管</label>
                                 </th>
                                 <th>
-                                    <label>xxx</label>
+                                    <label>{{showForm.MainDepart.User}}</label>
                                 </th>
                                 <td>
                                     <label>狀態 未處理</label>
@@ -294,6 +261,7 @@
 <script>
 import FilingNumModal from "@/components/FilingNumModal";
 import SystemHeader from '@/components/SystemHeader';
+import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -322,7 +290,7 @@ export default {
                 MainDepart:'',
                 State:'',
                 Date:'',
-                LimitDate:'',
+                LimitedDate:null,
                 ToDoValue:null,
                 Description:'',
                 showNumberText:null,
@@ -341,6 +309,12 @@ export default {
             }
 
         }
+    },
+    computed: {
+        ...mapState({
+            userName: state => state.user.user.Name,
+            chief: state => state.user.user.Chief,
+        })
     },
     methods:{
         async next(){
@@ -402,9 +376,9 @@ export default {
                     if(res.Status==0)
                     {
                         const data = res.Data;
-                        this.form.PetitionNumberId = data.Row[0].Id;
-                        this.showForm.showNumber = data.Row[0].showNumber;
-                        this.showForm.showNumberText =  data.Row[0].showNumberText;
+                        this.form.PetitionNumberId = data.Row.Id;
+                        this.showForm.showNumber = data.Row.ShowNumber;
+                        this.showForm.showNumberText =  data.Row.ShowNumberText;
                     }
 
                     const form = _.cloneDeep(this.form);
@@ -423,6 +397,7 @@ export default {
                     this.showForm.Date = data.Row.CreatedAt;
                     this.form.ArchiveDate = data.Row.ArchiveDate;
                     this.apID = data.Row.Id;
+                    this.showForm.LimitedDate = data.Row.LimitedDate;
                 }
             }
             catch(err)

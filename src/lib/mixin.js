@@ -7,6 +7,9 @@ const mixinLib = {
     datetime(datetime) {
         return moment(datetime).format('YYYY-MM-DD HH:mm:ss');
     },
+    date(datetime) {
+        return moment(datetime).format('YYYY-MM-DD HH:mm');
+    },
     async validate(scope) {
         let isPass = false;
         try {
