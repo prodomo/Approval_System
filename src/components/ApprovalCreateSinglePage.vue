@@ -90,8 +90,8 @@
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
-                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="showForm.Description" name="Description" v-validate="'required'"></textarea>
-                                <span v-show="errors.has(`Description:required`)" class="error">{{"請輸入說明"}}</span>
+                                <textarea class="form-control" rows="10" aria-label="With textarea" v-model="form.State" name="State" v-validate="'required'"></textarea>
+                                <span v-show="errors.has(`State:required`)" class="error">{{"請輸入說明"}}</span>
                             </td>
                         </tr>
                         <tr>
@@ -104,10 +104,11 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
+                                <label v-for="items in showForm.LayerOptions"><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label>
+                                <!-- <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
                                 <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="showForm.ToDoValue"/>簽核送出</label><br>
                                 <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="showForm.ToDoValue"/>送會其他單位</label><br>
-                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="showForm.ToDoValue"/>單位分文</label><br>
+                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="showForm.ToDoValue"/>單位分文</label><br> -->
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
@@ -198,7 +199,7 @@
                         <tr>
                             <th>說明</th>
                             <td colspan="7">
-                                <label>{{showForm.Description}}</label>
+                                <label>{{form.State}}</label>
                             </td>
                         </tr>
                         <tr><td colspan="8">
@@ -285,16 +286,16 @@ export default {
                 Purport:'',
                 Proposition:'',
                 LayerOptionId:null,
+                State:'',               
             },
             showForm:{
                 MainDepart:'',
-                State:'',
                 Date:'',
                 LimitedDate:null,
                 ToDoValue:null,
-                Description:'',
                 showNumberText:null,
                 showNumber:null,
+                LayerOptions:null,
             },
             modalParams: {
                 show: false,
@@ -306,7 +307,12 @@ export default {
                 Confidentiality:'普通',
                 IsoValue:'無',
                 status:'',
-            }
+            },
+            tempForm:
+            {
+                petitionId:null,
+                layerId:null,
+            },
 
         }
     },
@@ -314,7 +320,9 @@ export default {
         ...mapState({
             userName: state => state.user.user.Name,
             chief: state => state.user.user.Chief,
-        })
+        }),
+        
+
     },
     methods:{
         async next(){
@@ -348,7 +356,7 @@ export default {
             this.form.ISOTypeId=null;
             this.form.Purport='',
             this.form.Proposition='';
-            this.showForm.Description='';
+            this.form.State='';
             this.showForm.Date='';
             this.showForm.LimitDate='';
             this.showForm.ToDoValue=null;
@@ -439,6 +447,35 @@ export default {
                 this.guestRedirectHome(err.response.status);
             }
         },
+        async getOptionItems()
+        {
+            let res = null;
+            this.tempForm.petitionId = this.apID;
+            this.textForm.layerId = this.form.LayerOptionId;
+            try{
+                const textForm = _.cloneDeep(this.textForm);
+
+                if(!this.apID)
+                {
+                    res = await axios.get(`/api/LayerOptions`);
+                }
+                else
+                {
+                    res = await axios.get(`/api/LayerOptions`, textForm);
+                }
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+                    this.showForm.LayerOptions = data.Items;
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+        },
         setPriorityText()
         {
             if (this.form.PriorityId==1)
@@ -483,6 +520,9 @@ export default {
                 this.textForm.IsoValue='特素件';
         },
     },
+    created: function(){
+        this.getOptionItems();
+    }
 }
 </script>
 
