@@ -104,7 +104,9 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label v-for="items in showForm.LayerOptions"><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label>
+                                <div v-for v-for="items in showForm.LayerOptions">
+                                <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
+                                </div>
                                 <!-- <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
                                 <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="showForm.ToDoValue"/>簽核送出</label><br>
                                 <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="showForm.ToDoValue"/>送會其他單位</label><br>
