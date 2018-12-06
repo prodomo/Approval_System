@@ -8,6 +8,7 @@ import AnnouncementQueryPage from '@/components/AnnouncementQueryPage'
 import AppLayout from '@/components/AppLayout';
 import LoginPage from '@/components/LoginPage';
 import beforeEach from '@/router/beforeEach';
+import MainPage from '@/components/MainPage';
 
 
 
@@ -56,6 +57,12 @@ const router = new Router({
           name: 'Approval',
           component: Approval
         },
+        {
+          path: '/07',
+          name: 'MainPage',
+          component: MainPage
+        },
+        
     ]
   }
   ]
