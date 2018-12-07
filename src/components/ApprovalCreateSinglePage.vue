@@ -15,7 +15,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.ReferencePetitionId" @click="showModal()">
+                                <input class="form-control" type="text" placeholder="" v-model="form.ReferencePetitionId" @click="showFilingModal()">
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -105,7 +105,15 @@
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for v-for="items in showForm.LayerOptions">
-                                <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
+                                    <div v-if="items.Name =='送會其他單位'">
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <div v-if="showForm.ProcessingUnits.length !=0">
+                                            <label>{{showForm.ProcessingUnits}}</label>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
+                                    </div>
                                 </div>
                                 <!-- <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
                                 <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="showForm.ToDoValue"/>簽核送出</label><br>
@@ -128,6 +136,7 @@
                         <btn class="btn btn-primary" @click="reset">作廢</btn>
                         </td></tr>
                     </table>
+
                 </div>
                 <div v-if="step==2">
                     <table class="table table-bordered">
@@ -257,12 +266,14 @@
                 </div>
             </div>
         </section>
-        <filing-num-modal v-model="modalParams.show" @getfilingNum="getfilingNum"></filing-num-modal>
+        <filing-num-modal v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
+        <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
     </div>
 </template>
 
 <script>
 import FilingNumModal from "@/components/FilingNumModal";
+import DepartmentSelectModal from "@/components/DepartmentSelectModal";
 import SystemHeader from '@/components/SystemHeader';
 import {mapState} from 'vuex';
 import axios from 'axios';
@@ -270,7 +281,7 @@ import _ from 'lodash';
 
 export default {
     name: 'ApprovalCreateSinglePage',
-    components:{FilingNumModal, SystemHeader},
+    components:{FilingNumModal, SystemHeader, DepartmentSelectModal},
     data(){
         return{
             step:1,
@@ -298,8 +309,13 @@ export default {
                 showNumberText:null,
                 showNumber:null,
                 LayerOptions:null,
+                ProcessingUnits:[],
             },
-            modalParams: {
+            filingModel:{
+                show: false,
+                rid: null
+            },
+            departmentModel:{
                 show: false,
                 rid: null
             },
@@ -366,12 +382,19 @@ export default {
             this.apID=null;
             this.showForm.showNumberText=null;
         },
-        showModal() {
-            this.modalParams.show = true;
+        showFilingModal() {
+            this.filingModel.show = true;
+        },
+        showDepartModal() {
+            this.departmentModel.show = true;
         },
         getfilingNum(lastid)
         {
             this.form.ReferencePetitionId=lastid;
+        },
+        getDepartID(lastid)
+        {
+            this.showForm.ProcessingUnits=lastid;
         },
         async save()
         {
