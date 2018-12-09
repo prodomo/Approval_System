@@ -58,7 +58,7 @@ const router = new Router({
           component: Approval
         },
         {
-          path: '/07',
+          path: '/MainPage',
           name: 'MainPage',
           component: MainPage
         },

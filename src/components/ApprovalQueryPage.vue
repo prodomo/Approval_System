@@ -51,30 +51,27 @@
                         </tbody>
                     </table>
                     <br>
-                    <template v-if="items.length">
+                    <template v-if="items.length!=0">
                     <table class="table filing-table">
                         <thead class="filing-table">
                         <tr>
                             <th scope="col">序號</th>
                             <th scope="col">送簽日期</th>
                             <th scope="col">簽呈號</th>
-                            <th scope="col">承辦人</th>
                             <th scope="col">主辦單位</th>
                             <th scope="col">主旨</th>
                             <th scope="col">狀態</th>
-                            <th scope="col">結案日期</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(item,index) in items">
+                        <tr v-for="(approval,index) in approvalList">
                             <td>{{index}}</td>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.ID}}</td>
-                            <td>{{ item.person}}</td>
-                            <td>{{ item.depart}}</td>
-                            <td>{{ item.subject}}</td>
-                            <td><a>{{ item.state}}</a></td>
-                            <td>{{ item.enddate}}</td>
+                            <td>{{ approval.ArticleStatus.CreateDate}}</td>
+                            <td>{{ approval.PetitionNumber.ShowNumber}}</td>
+                            <td v-if="approval.Department!=null">{{ approval.Department.Name}}</td>
+                            <td v-else></td>
+                            <td>{{ approval.Purport}}</td>
+                            <td><a>{{ approval.ArticleStatus.Name}}</a></td>
                         </tr>
                     </tbody>
                     </table>
@@ -116,15 +113,42 @@
                 items:[
                     {ID:"1234", date:'2018-09-12', depart:'運務部', person:'王XX' ,subject:"test1" , state:'送簽中', enddate:''},
                     {ID:"4569", date:'2018-09-15', depart:'運務部', person:'陳XX', subject:"test2" , state:'送簽中', enddate:''},
-                ]
-
+                ],
+                approvalList:null,
 
             }
         },
         methods:{
             Date(){
                 this.form.date= Date();
+            },
+            async getApprovalLists()
+            {
+                let res = null;
+
+                try{
+                    res = await axios.get(`/api/Petitions`, {params:{
+                        mode:1,
+                        articleStatusId:1,
+                    }});
+
+                    res = res.data;
+                    if(res.Status==0)
+                    {
+                        const data = res.Data;
+                        this.approvalList = data.Items;
+                        
+                    }
+                }
+                catch(err)
+                {
+                    alert(err.message);
+                    this.guestRedirectHome(err.response.status);
+                }
             }
+        },
+        mounted: function(){
+            this.getApprovalLists();
         }
     }
 

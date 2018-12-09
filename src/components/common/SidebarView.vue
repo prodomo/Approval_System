@@ -2,7 +2,7 @@
     <aside class="main-sidebar">
         <section class="sidebar">
             <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">主選單</li>
+                <li class="header"><a href="/MainPage">主選單</a></li>
                 <li class="treeview" :class="{active: ($route.path.match(/\/approvalCreate(\/\d*?|.{0})/))}">
                     <router-link to="/approvalCreate">
                         <i class="fa fa-lock"></i>

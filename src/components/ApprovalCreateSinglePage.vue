@@ -104,7 +104,7 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <div v-for v-for="items in showForm.LayerOptions">
+                                <div v-for="items in showForm.LayerOptions">
                                     <div v-if="items.Name =='送會其他單位'">
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
@@ -115,10 +115,6 @@
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
                                     </div>
                                 </div>
-                                <!-- <label><input type="radio" name="ToDoValue" value="代為決行" v-model="showForm.ToDoValue" v-validate="'required'"/>代為決行</label><br>
-                                <label><input type="radio" name="ToDoValue" value="簽核送出" v-model="showForm.ToDoValue"/>簽核送出</label><br>
-                                <label><input type="radio" name="ToDoValue" value="送會其他單位" v-model="showForm.ToDoValue"/>送會其他單位</label><br>
-                                <label><input type="radio" name="ToDoValue" value="單位分文" v-model="showForm.ToDoValue"/>單位分文</label><br> -->
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
@@ -299,7 +295,8 @@ export default {
                 Purport:'',
                 Proposition:'',
                 LayerOptionId:null,
-                State:'',               
+                State:'',
+                DepartmentPetitions:null,               
             },
             showForm:{
                 MainDepart:'',
@@ -334,7 +331,7 @@ export default {
 
         }
     },
-    computed: {
+    computed:{
         ...mapState({
             userName: state => state.user.user.Name,
             chief: state => state.user.user.Chief,
@@ -412,6 +409,7 @@ export default {
                         this.form.PetitionNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
+                        this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
                     }
 
                     const form = _.cloneDeep(this.form);
@@ -545,7 +543,7 @@ export default {
                 this.textForm.IsoValue='特素件';
         },
     },
-    created: function(){
+    mounted: function(){
         this.getOptionItems();
     }
 }
