@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import ApprovalCreateSinglePage from '@/components/ApprovalCreateSinglePage'
 import Approval from '@/components/Approval'
 import ApprovalQueryPage from '@/components/ApprovalQueryPage'
+import ApprovalSignPage from '@/components/ApprovalSignPage'
 import AnnouncementCreatePage from '@/components/AnnouncementCreatePage'
 import AnnouncementQueryPage from '@/components/AnnouncementQueryPage'
 import AppLayout from '@/components/AppLayout';
@@ -58,9 +59,14 @@ const router = new Router({
           component: Approval
         },
         {
-          path: '/MainPage',
+          path: '/mainPage',
           name: 'MainPage',
           component: MainPage
+        },
+        {
+          path: '/approvalSignPage',
+          name: 'ApprovalSignPage',
+          component: ApprovalSignPage
         },
         
     ]

@@ -129,7 +129,7 @@
                 try{
                     res = await axios.get(`/api/Petitions`, {params:{
                         mode:1,
-                        articleStatusId:1,
+                        articleStatusId:3,
                     }});
 
                     res = res.data;
