@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div>
         <system-header header="公文作業" ID=approvalCreate title="簽呈建檔"></system-header>
         <section class="content">
@@ -479,8 +479,9 @@ export default {
                 {
                     res = await axios.get(`/api/LayerOptions`, {params:{
                         petitionId: this.apID,
-                        layerId: this.textForm.layerId,
+                        layerId: this.textForm.layerId
                     }});
+			alert(this.textForm.layerId);
                 }
                 res = res.data;
                 if(res.Status==0)
@@ -572,8 +573,8 @@ export default {
                 this.textForm.IsoValue='特素件';
         },
     },
-    mounted: function(){
-        this.getApprovalInfo();
+    async mounted(){
+        await this.getApprovalInfo();
         this.getOptionItems();
     }
 }
