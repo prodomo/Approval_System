@@ -108,7 +108,7 @@
                                     <div v-if="items.Name =='送會其他單位'">
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
-                                            <label>{{showForm.ProcessingUnits}}</label>
+                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -296,7 +296,8 @@ export default {
                 Proposition:'',
                 LayerOptionId:null,
                 State:'',
-                DepartmentPetitions:null,               
+                DepartmentPetitions:[],
+                PetitionComments:[],           
             },
             showForm:{
                 MainDepart:'',
@@ -344,8 +345,8 @@ export default {
             const isPass = await this.$validator.validateAll();
 
             if(isPass!=true){
-                alert(isPass);
-                alert(JSON.stringify(this.$validator.errors.items));
+                // alert(isPass);
+                // alert(JSON.stringify(this.$validator.errors.items));
             }
             else
             {
@@ -362,22 +363,27 @@ export default {
             }
         },
         async reset(){
-            this.step=1;
             this.form.ReferencePetitionId=null;
             this.form.PetitionNumberId=null;
-            this.showForm.MainDepart='';
             this.form.PriorityId=1;
             this.form.SecretLevelId=1;
-            this.form.ISOTypeId=null;
-            this.form.Purport='',
+            this.form.ISOTypeId=null;              
+            this.form.ArchiveDate=null;
+            this.form.Purport='';
             this.form.Proposition='';
-            this.form.State='';
-            this.showForm.Date='';
-            this.showForm.LimitDate='';
-            this.showForm.ToDoValue=null;
             this.form.LayerOptionId=null;
-            this.apID=null;
+            this.form.State='';
+            this.form.DepartmentPetitions=[];
+            this.form.PetitionComments=[],
+            this.showForm.MainDepart='';
+            this.showForm.Date='';
+            this.showForm.LimitedDate=null;
+            this.showForm.ToDoValue=null;
             this.showForm.showNumberText=null;
+            this.showForm.showNumber=null;
+            this.showForm.LayerOptions=null;
+            this.showForm.ProcessingUnits=[];
+
         },
         showFilingModal() {
             this.filingModel.show = true;
@@ -389,9 +395,18 @@ export default {
         {
             this.form.ReferencePetitionId=lastid;
         },
-        getDepartID(lastid)
+        getDepartID(departInfo)
         {
-            this.showForm.ProcessingUnits=lastid;
+            
+            var i;
+            this.showForm.ProcessingUnits=[];
+            this.form.DepartmentPetitions=[];
+            for( i=0; i < departInfo.length; i++)
+            {
+                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
+                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
+                                                    User: departInfo[i].User});
+            }
         },
         async save()
         {
@@ -409,7 +424,6 @@ export default {
                         this.form.PetitionNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
-                        this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
                     }
 
                     const form = _.cloneDeep(this.form);
@@ -433,7 +447,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
 
@@ -466,7 +480,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -495,7 +509,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -543,7 +557,7 @@ export default {
                 this.textForm.IsoValue='特素件';
         },
     },
-    mounted: function(){
+    async mounted(){
         this.getOptionItems();
     }
 }

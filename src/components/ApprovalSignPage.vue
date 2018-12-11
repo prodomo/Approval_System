@@ -340,11 +340,6 @@ export default {
                 IsoValue:'無',
                 status:'',
             },
-            tempForm:
-            {
-                petitionId:null,
-                layerId:null,
-            },
 
         }
     },
@@ -361,8 +356,8 @@ export default {
             const isPass = await this.$validator.validateAll();
 
             if(isPass!=true){
-                alert(isPass);
-                alert(JSON.stringify(this.$validator.errors.items));
+                // alert(isPass);
+                // alert(JSON.stringify(this.$validator.errors.items));
             }
             else
             {
@@ -463,7 +458,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -479,9 +474,8 @@ export default {
                 {
                     res = await axios.get(`/api/LayerOptions`, {params:{
                         petitionId: this.apID,
-                        layerId: this.textForm.layerId
+                        layerId: this.textForm.LayerId
                     }});
-			alert(this.textForm.layerId);
                 }
                 res = res.data;
                 if(res.Status==0)
@@ -492,7 +486,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -512,7 +506,7 @@ export default {
                     this.form.PriorityId = data.Row.PriorityId;
                     this.form.Purport = data.Row.Purport;
                     this.form.Proposition = data.Row.Proposition;
-                    this.textForm.layerId = data.Row.LayerId;
+                    this.textForm.LayerId = data.Row.LayerId;
                     this.form.LayerOptionId = data.Row.LayerOptionId;
                     this.form.State = data.Row.State;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
@@ -525,7 +519,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },

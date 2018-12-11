@@ -142,12 +142,12 @@
                 }
                 catch(err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
                     this.guestRedirectHome(err.response.status);
                 }
             }
         },
-        mounted: function(){
+       async mounted(){
             this.getApprovalLists();
         }
     }

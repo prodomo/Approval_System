@@ -12,7 +12,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in items">
-                            <td><input type="checkbox" id=item.Id :value=item.Id v-model="selected"/></td>
+                            <td><input type="checkbox" id=item.Id :value=item v-model="selected"/></td>
                             <td><label>{{ item.Name }}</label></td>
                             <td>{{ item.User }}</td>
                         </tr>
@@ -62,8 +62,8 @@
             async onShowModal() {
                 this.getDepartList();
             },
-            onsubmit(id){
-                this.$emit('getDepartID', id);
+            onsubmit(selected){
+                this.$emit('getDepartID', selected);
                 this.hideModal();
                 this.resetform();
             },
