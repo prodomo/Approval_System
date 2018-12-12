@@ -369,7 +369,7 @@ export default {
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
-                    // this.save();
+                    this.save();
                 }
             }
         },
@@ -427,7 +427,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
 
@@ -437,19 +437,19 @@ export default {
             let res = null;
             this.sending = true;
             try{
-                // const form = _.cloneDeep(this.form);
+                const form = _.cloneDeep(this.form);
 
-                // if(!this.apID)
-                // {
-                //     res = await axios.post(`/api/Petitions`, form);
-                // }
-                // else
-                // {
-                //     res = await axios.put(`/api/Petitions/${this.apID}`, form);
-                // }
-                // res = res.data;
-                // if(res.Status==0)
-                // {
+                if(!this.apID)
+                {
+                    res = await axios.post(`/api/Petitions`, form);
+                }
+                else
+                {
+                    res = await axios.put(`/api/Petitions/${this.apID}`, form);
+                }
+                res = res.data;
+                if(res.Status==0)
+                {
                     this.$toast.success({
                         title: '成功訊息',
                         message: '送出成功'
@@ -457,7 +457,7 @@ export default {
                     this.$router.push({
                     path: `/mainPage`,
                     });
-                // }
+                }
             }
             catch(err)
             {

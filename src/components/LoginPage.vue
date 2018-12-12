@@ -81,7 +81,7 @@
                         axios.defaults.headers.common['Authorization'] = `bearer ${data.access_token}`;
                         this.$localStorage.set('access_token', data.access_token);
                         await this.syncUser();
-                        this.$router.push(`/approvalCreate`);
+                        this.$router.push(`/mainPage`);
                     }
                 } catch(err) {
                     alert(err.message);
