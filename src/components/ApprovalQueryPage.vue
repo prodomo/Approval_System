@@ -71,7 +71,7 @@
                             <td v-if="approval.Department!=null">{{ approval.Department.Name}}</td>
                             <td v-else></td>
                             <td>{{ approval.Purport}}</td>
-                            <td><a>{{ approval.ArticleStatus.Name}}</a></td>
+                            <td><a @click="goRoute(approval.Id, approval.ArticleStatus.Id)">{{ approval.ArticleStatus.Name}}</a></td>
                         </tr>
                     </tbody>
                     </table>
@@ -95,6 +95,7 @@
         components: {Treeselect, Datepicker, SystemHeader},
         data(){
             return{
+                articleStatusId: this.$route.params.articleStatusId ? parseInt(this.$route.params.articleStatusId) : 0,
                 departID:[],
                 departs:[
                     {id:'運務部', label:'運務部'},
@@ -129,7 +130,7 @@
                 try{
                     res = await axios.get(`/api/Petitions`, {params:{
                         mode:1,
-                        articleStatusId:3,
+                        articleStatusId: this.articleStatusId,
                     }});
 
                     res = res.data;
@@ -144,6 +145,21 @@
                 {
                     // alert(err.message);
                     this.guestRedirectHome(err.response.status);
+                }
+            },
+            async goRoute(id, stateId)
+            {
+                if(stateId==1)
+                {
+                    this.$router.push({
+                        path: `/approvalCreate/${id}`
+                    });
+                }
+                else
+                {
+                    this.$router.push({
+                        path: `/approvalSignPage/${id}`
+                    });
                 }
             }
         },

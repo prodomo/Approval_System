@@ -18,8 +18,8 @@
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <div v-if="showForm.Date!=null">
-                                    <label>{{date(showForm.Date)}}</label>
+                                <div v-if="showForm.CreateDate!=null">
+                                    <label>{{date(showForm.CreateDate)}}</label>
                                 </div>
                             </td>
                             <th>密等</th>
@@ -127,7 +127,7 @@
                                     <div v-if="items.Name =='送會其他單位'">
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
-                                            <label>{{showForm.ProcessingUnits}}</label>
+                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -144,8 +144,8 @@
 
                         </tbody>
                         <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary">存草稿</btn>
-                        <btn class="btn btn-primary">預覽</btn>
+                        <btn class="btn btn-primary" @click="next">存草稿</btn>
+                        <btn class="btn btn-primary" @click="next">預覽</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -251,7 +251,8 @@
                                     <label>{{showForm.MainDepart.User}}</label>
                                 </th>
                                 <td>
-                                    <label>狀態 未處理</label>
+                                    <label>狀態 未處理</label><br>
+                                    <label>{{showForm.SignInfo}}</label>
                                 </td>
                             </tr>
                             </tbody>
@@ -296,7 +297,7 @@ export default {
     data(){
         return{
             step:1,
-            apID:35,
+            apID: this.$route.params.apID ? parseInt(this.$route.params.apID) : 35,
             items:[],
             showModalStatus: false,
             sending: false,
@@ -315,7 +316,7 @@ export default {
             },
             showForm:{
                 MainDepart:null,
-                Date:null,
+                CreateDate:null,
                 LimitedDate:null,
                 ToDoValue:null,
                 showNumberText:null,
@@ -368,7 +369,7 @@ export default {
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
-                    this.save();
+                    // this.save();
                 }
             }
         },
@@ -390,45 +391,45 @@ export default {
         {
             let res = null;
             this.sending = true;
-            // try{
-            //     if(!this.apID)
-            //     {
-            //         res = await axios.post(`/api/PetitionNumbers`);
-            //         res = res.data;
+            try{
+                if(!this.apID)
+                {
+                    res = await axios.post(`/api/PetitionNumbers`);
+                    res = res.data;
 
-            //         if(res.Status==0)
-            //         {
-            //             const data = res.Data;
-            //             this.form.PetitionNumberId = data.Row.Id;
-            //             this.showForm.showNumber = data.Row.ShowNumber;
-            //             this.showForm.showNumberText =  data.Row.ShowNumberText;
-            //             this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
-            //         }
+                    if(res.Status==0)
+                    {
+                        const data = res.Data;
+                        this.form.PetitionNumberId = data.Row.Id;
+                        this.showForm.showNumber = data.Row.ShowNumber;
+                        this.showForm.showNumberText =  data.Row.ShowNumberText;
+                        this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
+                    }
 
-            //         const form = _.cloneDeep(this.form);
-            //         res = await axios.post(`/api/Petitions`, form);
-            //     }
-            //     else
-            //     {
-            //         const form = _.cloneDeep(this.form);
-            //         res = await axios.put(`/api/Petitions/${this.apID}`, form);
-            //     }
-            //     res = res.data;
-            //     if(res.Status==0)
-            //     {
-            //         const data = res.Data;
+                    const form = _.cloneDeep(this.form);
+                    res = await axios.post(`/api/Petitions`, form);
+                }
+                else
+                {
+                    const form = _.cloneDeep(this.form);
+                    res = await axios.put(`/api/Petitions/${this.apID}`, form);
+                }
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
 
-            //         this.showForm.Date = data.Row.CreatedAt;
-            //         this.form.ArchiveDate = data.Row.ArchiveDate;
-            //         this.apID = data.Row.Id;
-            //         this.showForm.LimitedDate = data.Row.LimitedDate;
-            //     }
-            // }
-            // catch(err)
-            // {
-            //     alert(err.message);
-            //     this.guestRedirectHome(err.response.status);
-            // }
+                    this.showForm.Date = data.Row.CreatedAt;
+                    this.form.ArchiveDate = data.Row.ArchiveDate;
+                    this.apID = data.Row.Id;
+                    this.showForm.LimitedDate = data.Row.LimitedDate;
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
 
         },
         async onSubmit()
@@ -449,11 +450,13 @@ export default {
                 // res = res.data;
                 // if(res.Status==0)
                 // {
-                //     this.$toast.success({
-                //         title: '成功訊息',
-                //         message: '送出成功'
-                //         });
-                //     this.reset();
+                    this.$toast.success({
+                        title: '成功訊息',
+                        message: '送出成功'
+                        });
+                    this.$router.push({
+                    path: `/mainPage`,
+                    });
                 // }
             }
             catch(err)
@@ -514,7 +517,8 @@ export default {
                     this.showForm.showNumberText = data.Row.PetitionNumber.ShowNumberText;
                     this.showForm.InitUser = data.Row.User.Name;
                     this.showForm.MainDepart = data.Chief;
-                    
+                    this.showForm.CreateDate = data.Row.CreateDate;
+                    // this.form.PetitionNumberId = this.apID;
                 }
             }
             catch(err)

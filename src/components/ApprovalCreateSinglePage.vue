@@ -105,10 +105,13 @@
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
-                                    <div v-if="items.Name =='送會其他單位'">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
-                                        <div v-if="showForm.ProcessingUnits.length !=0">
-                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
+                                    <div v-if="items.Name =='陳核送出'">
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue==items.Name">
+                                            <input type="checkbox" await v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">(送會其他單位)<br>
+                                            <div v-if="showForm.ProcessingUnits.length !=0">
+                                                <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -281,10 +284,11 @@ export default {
     data(){
         return{
             step:1,
-            apID:null,
+            apID:this.$route.params.apID ? parseInt(this.$route.params.apID) : null,
             items:[],
             showModalStatus: false,
             sending: false,
+            PetitionsChecked:false,
             form:{
                 ReferencePetitionId:null,
                 PetitionNumberId:null,
@@ -383,13 +387,23 @@ export default {
             this.showForm.showNumber=null;
             this.showForm.LayerOptions=null;
             this.showForm.ProcessingUnits=[];
+            this.apID=null;
 
         },
         showFilingModal() {
             this.filingModel.show = true;
         },
-        showDepartModal() {
-            this.departmentModel.show = true;
+        showDepartModal(checked) {
+            if(!checked)
+            {
+                this.departmentModel.show = true;
+            }
+            else
+            {
+                this.departmentModel.show = false;
+                this.showForm.ProcessingUnits=[];
+                this.form.DepartmentPetitions=[];                
+            }
         },
         getfilingNum(lastid)
         {
@@ -489,6 +503,9 @@ export default {
             let res = null;
             this.tempForm.petitionId = this.apID;
             this.textForm.layerId = this.form.LayerOptionId;
+            if(this.apID != null){
+                await this.getApprovalInfo();
+            }
             try{
                 const textForm = _.cloneDeep(this.textForm);
 
@@ -505,6 +522,39 @@ export default {
                 {
                     const data = res.Data;
                     this.showForm.LayerOptions = data.Items;
+                }
+            }
+            catch(err)
+            {
+                // alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+        },
+        async getApprovalInfo()
+        {
+            let res = null;
+            try{
+
+                res = await axios.get(`/api/Petitions/${this.apID}`);
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+                    this.form.ReferencePetitionId = data.Row.ReferencePetitionId;
+                    this.form.SecretLevelId = data.Row.SecretLevelId;
+                    this.form.ISOTypeId = data.Row.ISOTypeId;
+                    this.form.PriorityId = data.Row.PriorityId;
+                    this.form.Purport = data.Row.Purport;
+                    this.form.Proposition = data.Row.Proposition;
+                    this.textForm.LayerId = data.Row.LayerId;
+                    this.form.LayerOptionId = data.Row.LayerOptionId;
+                    this.form.State = data.Row.State;
+                    this.showForm.LimitedDate = data.Row.LimitedDate;
+                    this.showForm.showNumber = data.Row.PetitionNumber.ShowNumber;
+                    this.showForm.showNumberText = data.Row.PetitionNumber.ShowNumberText;
+                    this.showForm.InitUser = data.Row.User.Name;
+                    this.showForm.MainDepart = data.Chief[0];
+                    
                 }
             }
             catch(err)

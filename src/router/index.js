@@ -39,7 +39,17 @@ const router = new Router({
           component: ApprovalCreateSinglePage
         },
         {
+          path: '/approvalCreate/:apID(\\d*?)',
+          name: 'ApprovalCreateSinglePage',
+          component: ApprovalCreateSinglePage
+        },
+        {
           path: '/approvalQuery',
+          name: 'ApprovalQueryPage',
+          component: ApprovalQueryPage
+        },
+        {
+          path: '/approvalQuery/:articleStatusId(\\d*?)',
           name: 'ApprovalQueryPage',
           component: ApprovalQueryPage
         },
@@ -65,6 +75,11 @@ const router = new Router({
         },
         {
           path: '/approvalSignPage',
+          name: 'ApprovalSignPage',
+          component: ApprovalSignPage
+        },
+        {
+          path: '/approvalSignPage/:apID(\\d*?)',
           name: 'ApprovalSignPage',
           component: ApprovalSignPage
         },
