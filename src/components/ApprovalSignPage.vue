@@ -125,13 +125,13 @@
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
                                     <div v-if="items.Name =='送會其他單位'">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
                                             <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
                                         </div>
                                     </div>
                                     <div v-else>
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
                                     </div>
                                 </div>
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
@@ -261,7 +261,7 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{showForm.ToDoValue}}</label>
+                                <label>{{showForm.ToDoValue.Name}}</label>
                             </td>
                         </tr>
                         <tr>
@@ -312,7 +312,8 @@ export default {
                 Proposition:'',
                 LayerOptionId:null,
                 State:'',
-                DepartmentPetitions:null,               
+                DepartmentPetitions:null,
+                PetitionComments:null,           
             },
             showForm:{
                 MainDepart:null,
@@ -355,6 +356,7 @@ export default {
     methods:{
         async next(){
             const isPass = await this.$validator.validateAll();
+            this.form.LayerOptionId = this.showForm.ToDoValue.Id;
 
             if(isPass!=true){
                 // alert(isPass);
@@ -391,6 +393,7 @@ export default {
         {
             let res = null;
             this.sending = true;
+            this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
             try{
                 if(!this.apID)
                 {
@@ -510,7 +513,6 @@ export default {
                     this.form.Purport = data.Row.Purport;
                     this.form.Proposition = data.Row.Proposition;
                     this.textForm.LayerId = data.Row.LayerId;
-                    this.form.LayerOptionId = data.Row.LayerOptionId;
                     this.form.State = data.Row.State;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
                     this.showForm.showNumber = data.Row.PetitionNumber.ShowNumber;
@@ -518,7 +520,7 @@ export default {
                     this.showForm.InitUser = data.Row.User.Name;
                     this.showForm.MainDepart = data.Chief;
                     this.showForm.CreateDate = data.Row.CreateDate;
-                    // this.form.PetitionNumberId = this.apID;
+                    this.form.PetitionComments = data.Row.PetitionComments;
                 }
             }
             catch(err)
