@@ -108,8 +108,9 @@
                                     <div v-if="items.Name =='陳核送出'">
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
                                         <div v-if="showForm.ToDoValue==items.Name">
-                                            <input type="checkbox" await v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">(送會其他單位)<br>
-                                            <div v-if="showForm.ProcessingUnits.length !=0">
+                                            <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
+                                            <a @click="showDepartModal()">(送會其他單位)</a><br>
+                                            <div v-if="PetitionsChecked">
                                                 <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
                                             </div>
                                         </div>
@@ -388,10 +389,14 @@ export default {
             this.showForm.LayerOptions=null;
             this.showForm.ProcessingUnits=[];
             this.apID=null;
+            this.step=1;
 
         },
         showFilingModal() {
             this.filingModel.show = true;
+        },
+        showDepartModal() {
+                this.departmentModel.show = true;
         },
         showDepartModal(checked) {
             if(!checked)

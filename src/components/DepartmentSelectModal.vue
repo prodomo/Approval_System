@@ -1,6 +1,8 @@
 <template>
     <modal v-model="showModalStatus" size="lg" :keyboard="false" :footer="false" @show="onShowModal" @hide="hideModal">
         <div>
+            <button class="btn btn-secondary" @click="allselect">全選</button>
+            <button class="btn btn-secondary" @click="allnotSelect">全不選</button>
             <form>
                 <table class="table table-bordered">
                     <thead>
@@ -50,10 +52,6 @@
                 loading: false,
                 sending: false,
                 showModalStatus: false,
-                // form:{
-                //     mode:2,
-                //     departmentLevel:null,
-                // },
                 items:[],
                 selected:[],
             };
@@ -74,23 +72,23 @@
                 // this.form.according='';
                 // this.form.filingID=null;
             },
-
+            allselect(){
+                this.selected = this.items;
+            },
+            allnotSelect()
+            {
+                this.selected=[];
+            },
             async getDepartList()
             {
                 let res = null;
-                // this.sending = true;
                 try{
-                    // if(!this.form.mode)
-                    // {
-                    //     res = await axios.get(`/api/Departments`);
-                    // }
-                    // else
-                    // {
+
                     res = await axios.get(`/api/Departments`, {params:{
                         mode:2,
                         departmentLevel:null
                     }});
-                    // }
+
                     res = res.data;
 
                     if(res.Status==0)

@@ -124,7 +124,10 @@
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
-                                    <div v-if="items.Name =='送會其他單位'">
+                                    <div v-if="items.Name == '陳核送出（總經理室主任核稿）'">
+                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
+                                    </div>
+                                    <div v-else-if="items.Name =='送會其他單位'">
                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
                                             <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
@@ -281,6 +284,7 @@
         <filing-num-modal v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
         <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
     </div>
+
 </template>
 
 <script>
@@ -301,6 +305,7 @@ export default {
             items:[],
             showModalStatus: false,
             sending: false,
+            departmentList:null,
             form:{
                 ReferencePetitionId:null,
                 PetitionNumberId:null,
@@ -312,7 +317,7 @@ export default {
                 Proposition:'',
                 LayerOptionId:null,
                 State:'',
-                DepartmentPetitions:null,
+                DepartmentPetitions:[],
                 PetitionComments:null,           
             },
             showForm:{
@@ -350,7 +355,15 @@ export default {
             userName: state => state.user.user.Name,
             chief: state => state.user.user.Chief,
         }),
-        
+        isDisabled() {
+            if(this.form.DepartmentPetitions.length!=0 || this.showForm.ProcessingUnits.length!=0)
+            {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
 
     },
     methods:{
@@ -385,9 +398,17 @@ export default {
         {
             this.form.ReferencePetitionId=lastid;
         },
-        getDepartID(lastid)
+        getDepartID(departInfo)
         {
-            this.showForm.ProcessingUnits=lastid;
+            var i;
+            this.showForm.ProcessingUnits=[];
+            this.form.DepartmentPetitions=[];
+            for( i=0; i < departInfo.length; i++)
+            {
+                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
+                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
+                                                    User: departInfo[i].User});
+            }
         },
         async save()
         {
@@ -521,11 +542,47 @@ export default {
                     this.showForm.MainDepart = data.Chief;
                     this.showForm.CreateDate = data.Row.CreateDate;
                     this.form.PetitionComments = data.Row.PetitionComments;
+                    this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
                 }
             }
             catch(err)
             {
                 // alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+        },
+        async getDepartmentInfo(id)
+        {
+            await this.getDepartList();
+            let res = null;
+            try{
+            }
+            catch(err)
+            {
+
+            }
+        },
+        async getDepartList()
+        {
+            let res = null;
+            try{
+
+                res = await axios.get(`/api/Departments`, {params:{
+                    mode:2,
+                    departmentLevel:null
+                }});
+
+                res = res.data;
+
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+                    this.departmentList = data.Items;
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
