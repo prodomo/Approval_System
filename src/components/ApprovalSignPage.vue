@@ -4,6 +4,7 @@
         <section class="content">
             <div class="box-body">
                 <div v-if="step==1">
+                    
                     <table class="table table-bordered">
                         <tbody>
                         <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{form.ReferencePetitionId}}辦理</th></tr>
@@ -50,7 +51,7 @@
                         <tr>
                             <th>承辦單位</th>
                             <td>
-                                <label></label>
+                                <label>{{showForm.MainDepart.Department}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -97,22 +98,45 @@
                         </tr>
                         </tbody>
                         </table>
+                        <div v-for="(item,index) in Commnets ">
+                            
                         <table  class="table table-bordered">
                             <tbody>
                             <tr class="status-table">
                                 <th>
-                                    <label>單位主管</label>
+                                    <label>{{item.Layer.Name}}</label>
                                 </th>
                                 <th>
-                                    <label></label>
+                                    <label>{{item.User.Name}}</label>
                                 </th>
                                 <td>
-                                    <label>狀態 未處理</label>
+                                    <label>於{{date(item.CreatedAt)}}</label><br>
+                                    <label>{{item.Comment}}</label>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
+                           
+                        </div>
                         </td></tr>
+                            <tr  v-if="userName =='楊豐文'">
+                                <th>常用詞彙</th>
+                                <td colspan="7">
+                                    <label><input type="checkbox" value="閱" v-model="words"/>閱</label>
+                                    <label><input type="checkbox" value="可" v-model="words"/>可</label>
+                                    <label><input type="checkbox" value="如擬" v-model="words"/>如擬</label>
+                                    <label><input type="checkbox" value="存查" v-model="words"/>存查</label>
+                                    <label><input type="checkbox" value="來說明" v-model="words"/>來說明</label>
+                                </td>
+                            </tr>
+                            <tr  v-if="userName =='楊豐文'">
+                                <th>列管追蹤</th>
+                                <td colspan="7">
+                                    <label><input type="checkbox" name="trace" value="發文公告" v-model="trace"/>發文公告</label>
+                                    <label><input type="checkbox" name="trace" value="會議中討論" v-model="trace"/>會議中討論</label>
+                                    <label><input type="checkbox" name="trace" value="座談會宣導" v-model="trace"/>座談會宣導</label>
+                                </td>
+                            </tr>
                         <tr>
                             <th>簽核內容</th>
                             <td colspan="7">
@@ -151,6 +175,7 @@
                         <btn class="btn btn-primary" @click="next">預覽</btn>
                         </td></tr>
                     </table>
+                    
                 </div>
                 <div v-if="step==2">
                     <table class="table table-bordered">
@@ -197,7 +222,7 @@
                         <tr>
                             <th>承辦單位</th>
                             <td>
-                                <label>{{showForm.MainDepart[0].Department}}</label>
+                                <label>{{showForm.MainDepart.Department}}</label>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -244,22 +269,25 @@
                         </tr>
                         </tbody>
                         </table>
+                        <div v-for="item in Commnets">
                         <table  class="table table-bordered">
                             <tbody>
                             <tr class="status-table">
                                 <th>
-                                    <label>單位主管</label>
+                                    <label>{{item.Layer.Name}}</label>
                                 </th>
                                 <th>
-                                    <label>{{showForm.MainDepart.User}}</label>
+                                    <label>{{item.User.Name}}</label>
                                 </th>
                                 <td>
-                                    <label>狀態 未處理</label><br>
-                                    <label>{{showForm.SignInfo}}</label>
+                                    <label>於{{date(item.CreatedAt)}}</label><br>
+                                    <label>{{item.Comment}}</label>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
+                        
+                        </div>
                         </td></tr>
                         <tr>
                             <th>簽核選項</th>
@@ -283,6 +311,7 @@
         </section>
         <filing-num-modal v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
         <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
+        <!-- <label>{{Commnets}}</label> -->
     </div>
 
 </template>
@@ -295,17 +324,21 @@ import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
 
+
 export default {
     name: 'ApprovalSignPage',
     components:{FilingNumModal, SystemHeader, DepartmentSelectModal},
     data(){
         return{
             step:1,
-            apID: this.$route.params.apID ? parseInt(this.$route.params.apID) : 35,
+            apID: this.$route.params.apID ? parseInt(this.$route.params.apID) : null,
             items:[],
             showModalStatus: false,
             sending: false,
             departmentList:null,
+            words:[],
+            trace:[],
+            Commnets:[],
             form:{
                 ReferencePetitionId:null,
                 PetitionNumberId:null,
@@ -369,7 +402,7 @@ export default {
     methods:{
         async next(){
             const isPass = await this.$validator.validateAll();
-            this.form.LayerOptionId = this.showForm.ToDoValue.Id;
+            
 
             if(isPass!=true){
                 // alert(isPass);
@@ -384,7 +417,7 @@ export default {
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
-                    this.save();
+                    await this.save();
                 }
             }
         },
@@ -415,6 +448,7 @@ export default {
             let res = null;
             this.sending = true;
             this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
+            this.form.LayerOptionId=null;
             try{
                 if(!this.apID)
                 {
@@ -460,6 +494,7 @@ export default {
         {
             let res = null;
             this.sending = true;
+            this.form.LayerOptionId = this.showForm.ToDoValue.Id;
             try{
                 const form = _.cloneDeep(this.form);
 
@@ -539,7 +574,7 @@ export default {
                     this.showForm.showNumber = data.Row.PetitionNumber.ShowNumber;
                     this.showForm.showNumberText = data.Row.PetitionNumber.ShowNumberText;
                     this.showForm.InitUser = data.Row.User.Name;
-                    this.showForm.MainDepart = data.Chief;
+                    this.showForm.MainDepart = data.Chief[0];
                     this.showForm.CreateDate = data.Row.CreateDate;
                     this.form.PetitionComments = data.Row.PetitionComments;
                     this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
@@ -554,12 +589,32 @@ export default {
         async getDepartmentInfo(id)
         {
             await this.getDepartList();
+            for( i=0; i < departInfo.length; i++)
+            {
+                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
+                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
+                                                    User: departInfo[i].User});
+            }
+
+        },
+        async getPetitionComment()
+        {
             let res = null;
             try{
+                res = await axios.get(`/api/PetitionComments`, {params:{
+                    petitionId: this.apID,
+                }});
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+                    this.Commnets = data.Items;
+                }
             }
             catch(err)
             {
-
+                // alert(err.message);
+                this.guestRedirectHome(err.response.status);
             }
         },
         async getDepartList()
@@ -632,7 +687,8 @@ export default {
     },
     async mounted(){
         await this.getApprovalInfo();
-        this.getOptionItems();
+        await this.getOptionItems();
+        this.getPetitionComment();
     }
 }
 </script>

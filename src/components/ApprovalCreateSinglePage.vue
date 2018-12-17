@@ -250,6 +250,9 @@
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <label>{{showForm.ToDoValue}}</label>
+                                <div v-if="PetitionsChecked">
+                                    <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
+                                </div>
                             </td>
                         </tr>
                         <tr>
