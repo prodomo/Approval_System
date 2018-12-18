@@ -65,13 +65,22 @@
                         </thead>
                         <tbody>
                         <tr v-for="(approval,index) in approvalList">
-                            <td>{{index}}</td>
-                            <td>{{ approval.ArticleStatus.CreateDate}}</td>
-                            <td>{{ approval.PetitionNumber.ShowNumber}}</td>
-                            <td v-if="approval.Department!=null">{{ approval.Department.Name}}</td>
+                            <td>{{index+1}}</td>
+                            <td v-if="approval.CreateDate!=null">{{ date(approval.CreateDate)}}</td>
                             <td v-else></td>
-                            <td>{{ approval.Purport}}</td>
-                            <td><a @click="goRoute(approval.Id, approval.ArticleStatus.Id)">{{ approval.ArticleStatus.Name}}</a></td>
+
+                            <td v-if="approval.PetitionNumber!=null">{{ approval.PetitionNumber.ShowNumber}}</td>
+                            <td v-else></td>
+
+                            <td v-if="approval.Department!=null">{{approval.Department.Name}}</td>
+                            <td v-else></td>
+
+                            <td v-if="approval.Purport!=null">{{approval.Purport}}</td>
+                            <td v-else></td>
+
+                            <td v-if="approval.ArticleStatus!=null"><a @click="goRoute(approval.Id, approval.ArticleStatus.Id)">{{ approval.ArticleStatus.Name}}</a></td>
+                            <td v-else></td>
+
                         </tr>
                     </tbody>
                     </table>

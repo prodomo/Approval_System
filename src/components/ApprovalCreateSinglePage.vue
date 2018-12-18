@@ -434,6 +434,7 @@ export default {
         {
             let res = null;
             this.sending = true;
+            this.form.LayerOptionId=null;
             try{
                 if(!this.apID)
                 {

@@ -51,7 +51,12 @@
                         <tr>
                             <th>承辦單位</th>
                             <td>
-                                <label>{{showForm.MainDepart.Department}}</label>
+                                <div v-if="showForm.MainDepart!=null">
+                                    <label>{{showForm.MainDepart.Department}}</label>
+                                </div>
+                                <div v-else>
+                                    <label></label>
+                                </div>
                             </td>
                             <th>承辦人員</th>
                             <td>
@@ -418,6 +423,7 @@ export default {
                     this.setConfidentialityText();
                     this.setISOText();
                     await this.save();
+                    this.getPetitionComment();
                 }
             }
         },
