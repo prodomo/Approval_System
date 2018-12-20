@@ -105,7 +105,7 @@
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
-                                    <div v-if="items.Name =='陳核送出'">
+                                    <div v-if="items.Id == 1 ">
                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
                                         <div v-if="showForm.ToDoValue==items.Name">
                                             <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
@@ -281,6 +281,7 @@ import SystemHeader from '@/components/SystemHeader';
 import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
+import $ from 'jquery';
 
 export default {
     name: 'ApprovalCreateSinglePage',

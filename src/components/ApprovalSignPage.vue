@@ -127,11 +127,9 @@
                             <tr  v-if="userName =='楊豐文'">
                                 <th>常用詞彙</th>
                                 <td colspan="7">
-                                    <label><input type="checkbox" value="閱" v-model="words"/>閱</label>
-                                    <label><input type="checkbox" value="可" v-model="words"/>可</label>
-                                    <label><input type="checkbox" value="如擬" v-model="words"/>如擬</label>
-                                    <label><input type="checkbox" value="存查" v-model="words"/>存查</label>
-                                    <label><input type="checkbox" value="來說明" v-model="words"/>來說明</label>
+                                    <template v-for="vacabulary in PetitionCommonVocabulary">
+                                        <label><input type="checkbox" value="vacabulary.Name" v-model="words"/>{{vacabulary.Name}}</label>
+                                    </template>
                                 </td>
                             </tr>
                             <tr  v-if="userName =='楊豐文'">
@@ -159,7 +157,17 @@
                                     <div v-else-if="items.Name =='送會其他單位'">
                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
-                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
+                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
+                                        </div>
+                                    </div>
+                                    <div v-else-if="items.Id == 18 ">
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue==items.Name">
+                                            <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
+                                            <a @click="showDepartModal()">(送會其他單位)</a><br>
+                                            <div v-if="PetitionsChecked">
+                                                <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div v-else>
@@ -328,6 +336,7 @@ import SystemHeader from '@/components/SystemHeader';
 import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
+import $ from 'jquery';
 
 
 export default {
@@ -344,6 +353,7 @@ export default {
             words:[],
             trace:[],
             Commnets:[],
+            PetitionCommonVocabulary :[],
             form:{
                 ReferencePetitionId:null,
                 PetitionNumberId:null,
@@ -445,8 +455,7 @@ export default {
             for( i=0; i < departInfo.length; i++)
             {
                 this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
-                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
-                                                    User: departInfo[i].User});
+                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name});
             }
         },
         async save()
@@ -584,6 +593,12 @@ export default {
                     this.showForm.CreateDate = data.Row.CreateDate;
                     this.form.PetitionComments = data.Row.PetitionComments;
                     this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
+                    
+                    var i;
+                    for(i=0; i<this.form.DepartmentPetitions.length; i++)
+                    {
+                        this.showForm.ProcessingUnits.push({Name: this.form.DepartmentPetitions[i].Department.Name});
+                    }
                 }
             }
             catch(err)
@@ -591,17 +606,6 @@ export default {
                 // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
-        },
-        async getDepartmentInfo(id)
-        {
-            await this.getDepartList();
-            for( i=0; i < departInfo.length; i++)
-            {
-                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
-                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
-                                                    User: departInfo[i].User});
-            }
-
         },
         async getPetitionComment()
         {
@@ -623,27 +627,21 @@ export default {
                 this.guestRedirectHome(err.response.status);
             }
         },
-        async getDepartList()
+        async getPetitionCommonVocabulary()
         {
             let res = null;
             try{
-
-                res = await axios.get(`/api/Departments`, {params:{
-                    mode:2,
-                    departmentLevel:null
-                }});
-
+                res = await axios.get(`/api/PetitionCommonVocabularies`);
                 res = res.data;
-
                 if(res.Status==0)
                 {
                     const data = res.Data;
-                    this.departmentList = data.Items;
+                    this.PetitionCommonVocabulary  = data.Items;
                 }
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -694,7 +692,11 @@ export default {
     async mounted(){
         await this.getApprovalInfo();
         await this.getOptionItems();
-        this.getPetitionComment();
+        await this.getPetitionComment();
+        if(this.userName =='楊豐文')
+        {
+            this.getPetitionCommonVocabulary();
+        }
     }
 }
 </script>
@@ -721,6 +723,7 @@ export default {
 
     label{
         padding-top: 7px!important;
+        padding-right:10px;
     }
 
     th{
@@ -746,4 +749,5 @@ export default {
        padding-left: 80px !important;
        width: 2.5% !important; 
     }
+
 </style>
