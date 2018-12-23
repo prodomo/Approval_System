@@ -69,7 +69,7 @@
                             <td v-if="approval.CreateDate!=null">{{ date(approval.CreateDate)}}</td>
                             <td v-else></td>
 
-                            <td v-if="approval.PetitionNumber!=null">{{ approval.PetitionNumber.ShowNumber}}</td>
+                            <td v-if="approval.ArticleNumber!=null">{{ approval.ArticleNumber.ShowNumber}}</td>
                             <td v-else></td>
 
                             <td v-if="approval.Department!=null">{{approval.Department.Name}}</td>

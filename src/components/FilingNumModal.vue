@@ -3,8 +3,8 @@
         <div>
             <form>
                 <div class="row">請選擇來源類型:
-                    <label><input type="radio" name="according" value="out" v-model="form.according"/>外部</label>
-                    <label><input type="radio" name="according" value="inner" v-model="form.according"/>內部簽呈</label>
+                    <label><input type="radio" name="according" value=2 v-model="form.according" @change="getArticleNumbers"/>外部</label>
+                    <label><input type="radio" name="according" value=1 v-model="form.according" @change="getArticleNumbers"/>內部簽呈</label>
                 </div>
                 <table class="table table-bordered">
                     <thead>
@@ -16,9 +16,9 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in items">
-                            <td><input type="radio" :value=item.ID v-model="form.filingID"></td>
-                            <td>{{ item.ID }}</td>
-                            <td>{{ item.Subject }}</td>
+                            <td><input type="radio" :value=item.ShowNumber v-model="form.filingID"></td>
+                            <td>{{ item.ShowNumber }}</td>
+                            <td>{{ item.Petition.Purport }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -41,6 +41,9 @@
             },
             rid: {
                 type: [Number]
+            },
+            modeID:{
+                type: [Number]
             }
         },
         watch:{
@@ -54,13 +57,10 @@
                 sending: false,
                 showModalStatus: false,
                 form:{
-                    according:'',
+                    according:1,
                     filingID:null,
                 },
-                items:[
-                    {ID:"1234", Subject:"test1"},
-                    {ID:"4567", Subject:"test2"}
-                ]
+                items:[]
             };
         },
         methods:{
@@ -76,9 +76,36 @@
                 this.$emit('input', false);
             },
             resetform(){
-                this.form.according='';
+                this.form.according=1;
                 this.form.filingID=null;
-            }
+            },
+            async getArticleNumbers()
+            {
+                let res = null;
+                try{
+
+                    res = await axios.get(`/api/ArticleNumbers`, {params:{
+                        mode: this.modeID,
+                        articleTypeId:this.form.according
+                    }});
+
+                    res = res.data;
+
+                    if(res.Status==0)
+                    {
+                        const data = res.Data;
+                        this.items = data.Items;
+                    }
+                }
+                catch(err)
+                {
+                    alert(err.message);
+                    this.guestRedirectHome(err.response.status);
+                }
+            },
+        },
+        async mounted(){
+            this.getArticleNumbers();
         }
     }
 

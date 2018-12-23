@@ -152,10 +152,10 @@
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
                                     <div v-if="items.Name == '陳核送出（總經理室主任核稿）'">
-                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
+                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
                                     </div>
                                     <div v-else-if="items.Name =='送會其他單位'">
-                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
                                             <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
                                         </div>
@@ -167,6 +167,16 @@
                                             <a @click="showDepartModal()">(送會其他單位)</a><br>
                                             <div v-if="PetitionsChecked">
                                                 <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else-if="items.Id == 3 ">
+                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue==items.Name">
+                                            <input type="checkbox" @click="showFilingModal(AgentDecisionChecked)" v-model="AgentDecisionChecked">
+                                            <a @click="showFilingModal()" >(依據收文號)</a><br>
+                                            <div v-if="AgentDecisionChecked">
+                                                <label>依據收文號 {{form.AgentDecisionPetitionId}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -305,7 +315,10 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{showForm.ToDoValue.Name}}</label>
+                                <label>{{showForm.ToDoValue}}</label>
+                                <div v-if="form.AgentDecisionPetitionId != null">
+                                    <label>依據簽呈 {{form.AgentDecisionPetitionId}}</label>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -322,7 +335,7 @@
                 </div>
             </div>
         </section>
-        <filing-num-modal v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
+        <filing-num-modal v-bind:modeID="2" v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
         <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
         <!-- <label>{{Commnets}}</label> -->
     </div>
@@ -354,6 +367,8 @@ export default {
             trace:[],
             Commnets:[],
             PetitionCommonVocabulary :[],
+            PetitionsChecked:false,
+            AgentDecisionChecked:false,
             form:{
                 ReferencePetitionId:null,
                 PetitionNumberId:null,
@@ -366,7 +381,8 @@ export default {
                 LayerOptionId:null,
                 State:'',
                 DepartmentPetitions:[],
-                PetitionComments:null,           
+                PetitionComments:null,
+                AgentDecisionPetitionId:null,
             },
             showForm:{
                 MainDepart:null,
@@ -379,6 +395,7 @@ export default {
                 ProcessingUnits:[],
                 InitUser:'',
                 SignInfo:'',
+                
             },
             filingModel:{
                 show: false,
@@ -429,9 +446,6 @@ export default {
 
                 if(this.step==2)
                 {
-                    this.setPriorityText();
-                    this.setConfidentialityText();
-                    this.setISOText();
                     await this.save();
                     this.getPetitionComment();
                 }
@@ -440,12 +454,35 @@ export default {
         showFilingModal() {
             this.filingModel.show = true;
         },
+        showFilingModal(checked) {
+            if(!checked)
+            {
+                this.filingModel.show = true;
+            }
+            else
+            {
+                this.filingModel.show = false;
+                this.form.AgentDecisionPetitionId=null;             
+            }
+        },
         showDepartModal() {
             this.departmentModel.show = true;
         },
+        showDepartModal(checked) {
+            if(!checked)
+            {
+                this.departmentModel.show = true;
+            }
+            else
+            {
+                this.departmentModel.show = false;
+                this.showForm.ProcessingUnits=[];
+                this.form.DepartmentPetitions=[];                
+            }
+        },
         getfilingNum(lastid)
         {
-            this.form.ReferencePetitionId=lastid;
+            this.form.AgentDecisionPetitionId=lastid;  //代為決行的依據收文號
         },
         getDepartID(departInfo)
         {
@@ -467,7 +504,9 @@ export default {
             try{
                 if(!this.apID)
                 {
-                    res = await axios.post(`/api/PetitionNumbers`);
+                    // res = await axios.post(`/api/PetitionNumbers`);
+                    res = await axios.post(`/api/ArticleNumbers`, {ArticleTypeId:1});
+
                     res = res.data;
 
                     if(res.Status==0)
@@ -500,7 +539,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
 
@@ -535,7 +574,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -563,7 +602,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -586,13 +625,14 @@ export default {
                     this.textForm.LayerId = data.Row.LayerId;
                     this.form.State = data.Row.State;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
-                    this.showForm.showNumber = data.Row.PetitionNumber.ShowNumber;
-                    this.showForm.showNumberText = data.Row.PetitionNumber.ShowNumberText;
+                    this.showForm.showNumber = data.Row.ArticleNumber.ShowNumber;
+                    this.showForm.showNumberText = data.Row.ArticleNumber.ShowNumberText;
                     this.showForm.InitUser = data.Row.User.Name;
                     this.showForm.MainDepart = data.Chief[0];
                     this.showForm.CreateDate = data.Row.CreateDate;
                     this.form.PetitionComments = data.Row.PetitionComments;
                     this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
+                    this.textForm.status = data.Row.ArticleStatus.Name;
                     
                     var i;
                     for(i=0; i<this.form.DepartmentPetitions.length; i++)
@@ -603,7 +643,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -623,7 +663,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -641,7 +681,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },

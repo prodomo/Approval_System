@@ -269,7 +269,7 @@
                 </div>
             </div>
         </section>
-        <filing-num-modal v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
+        <filing-num-modal v-bind:modeID="1" v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
         <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
     </div>
 </template>
@@ -439,7 +439,10 @@ export default {
             try{
                 if(!this.apID)
                 {
-                    res = await axios.post(`/api/PetitionNumbers`);
+                    // res = await axios.post(`/api/PetitionNumbers`);
+                    res = await axios.post(`/api/ArticleNumbers`,{
+                    ArticleTypeId:1,
+                    });
                     res = res.data;
 
                     if(res.Status==0)
@@ -471,7 +474,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
 
@@ -560,8 +563,8 @@ export default {
                     this.form.LayerOptionId = data.Row.LayerOptionId;
                     this.form.State = data.Row.State;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
-                    this.showForm.showNumber = data.Row.PetitionNumber.ShowNumber;
-                    this.showForm.showNumberText = data.Row.PetitionNumber.ShowNumberText;
+                    this.showForm.showNumber = data.Row.ArticleNumber.ShowNumber;
+                    this.showForm.showNumberText = data.Row.ArticleNumber.ShowNumberText;
                     this.showForm.InitUser = data.Row.User.Name;
                     this.showForm.MainDepart = data.Chief[0];
                     
