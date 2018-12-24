@@ -371,7 +371,7 @@ export default {
             AgentDecisionChecked:false,
             form:{
                 ReferencePetitionId:null,
-                PetitionNumberId:null,
+                ArticleNumberId:null,
                 PriorityId:1,
                 SecretLevelId:1,
                 ISOTypeId:null,               
@@ -512,7 +512,7 @@ export default {
                     if(res.Status==0)
                     {
                         const data = res.Data;
-                        this.form.PetitionNumberId = data.Row.Id;
+                        this.form.ArticleNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
                         this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
@@ -570,6 +570,13 @@ export default {
                     this.$router.push({
                     path: `/mainPage`,
                     });
+                }
+                else if(res.Status==-3)
+                {
+                    this.$toast.error({
+                        title: '失敗訊息',
+                        message: '此文不能代為決行'
+                        });
                 }
             }
             catch(err)

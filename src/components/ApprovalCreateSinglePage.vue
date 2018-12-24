@@ -296,7 +296,7 @@ export default {
             PetitionsChecked:false,
             form:{
                 ReferencePetitionId:null,
-                PetitionNumberId:null,
+                ArticleNumberId:null,
                 PriorityId:1,
                 SecretLevelId:1,
                 ISOTypeId:null,               
@@ -373,7 +373,7 @@ export default {
         },
         async reset(){
             this.form.ReferencePetitionId=null;
-            this.form.PetitionNumberId=null;
+            this.form.ArticleNumberId=null;
             this.form.PriorityId=1;
             this.form.SecretLevelId=1;
             this.form.ISOTypeId=null;              
@@ -448,11 +448,11 @@ export default {
                     if(res.Status==0)
                     {
                         const data = res.Data;
-                        this.form.PetitionNumberId = data.Row.Id;
+                        this.form.ArticleNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
                     }
-
+                    
                     const form = _.cloneDeep(this.form);
                     res = await axios.post(`/api/Petitions`, form);
                 }
@@ -572,7 +572,7 @@ export default {
             }
             catch(err)
             {
-                // alert(err.message);
+                alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
