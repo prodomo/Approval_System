@@ -15,7 +15,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td>
-                                <input class="form-control" type="text" placeholder="" v-model="form.ReferencePetitionId" @click="showFilingModal()">
+                                <input class="form-control" type="text" placeholder="" v-model="showForm.ReferencePetitionShowNumber" @click="showFilingModal()">
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -106,8 +106,8 @@
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
                                     <div v-if="items.Id == 1 ">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
-                                        <div v-if="showForm.ToDoValue==items.Name">
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue!=null && showForm.ToDoValue.Name==items.Name">
                                             <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
                                             <a @click="showDepartModal()">(送會其他單位)</a><br>
                                             <div v-if="PetitionsChecked">
@@ -116,7 +116,7 @@
                                         </div>
                                     </div>
                                     <div v-else>
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
                                     </div>
                                 </div>
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
@@ -141,7 +141,7 @@
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{form.ReferencePetitionId}}辦理</th></tr>
+                        <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{showForm.ReferencePetitionShowNumber}}辦理</th></tr>
                         <tr>
                             <th>簽呈號</th>
                             <td colspan>
@@ -149,7 +149,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <label>{{form.ReferencePetitionId}}</label>
+                                <label>{{showForm.ReferencePetitionShowNumber}}</label>
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -249,7 +249,7 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{showForm.ToDoValue}}</label>
+                                <label>{{showForm.ToDoValue.Name}}</label>
                                 <div v-if="PetitionsChecked">
                                     <label v-for="user in showForm.ProcessingUnits">{{user.Name}} {{user.User}}  ,</label>
                                 </div>
@@ -309,6 +309,7 @@ export default {
                 PetitionComments:[],           
             },
             showForm:{
+                ReferencePetitionShowNumber:null,
                 MainDepart:'',
                 Date:'',
                 LimitedDate:null,
@@ -373,6 +374,7 @@ export default {
         },
         async reset(){
             this.form.ReferencePetitionId=null;
+            this.showForm.ReferencePetitionShowNumber=null;
             this.form.ArticleNumberId=null;
             this.form.PriorityId=1;
             this.form.SecretLevelId=1;
@@ -416,7 +418,8 @@ export default {
         },
         getfilingNum(lastid)
         {
-            this.form.ReferencePetitionId=lastid;
+            this.showForm.ReferencePetitionShowNumber = lastid.ShowNumber;
+            this.form.ReferencePetitionId=lastid.Petition.Id;
         },
         getDepartID(departInfo)
         {
@@ -483,7 +486,7 @@ export default {
         {
             let res = null;
             this.sending = true;
-            this.form.LayerOptionId=1;
+            this.form.LayerOptionId=this.showForm.ToDoValue.Id;
             try{
                 const form = _.cloneDeep(this.form);
 

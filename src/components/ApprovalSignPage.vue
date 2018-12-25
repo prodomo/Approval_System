@@ -152,17 +152,17 @@
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
                                     <div v-if="items.Name == '陳核送出（總經理室主任核稿）'">
-                                         <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
+                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
                                     </div>
                                     <div v-else-if="items.Name =='送會其他單位'">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
                                         <div v-if="showForm.ProcessingUnits.length !=0">
                                             <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
                                         </div>
                                     </div>
                                     <div v-else-if="items.Id == 18 ">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
-                                        <div v-if="showForm.ToDoValue==items.Name">
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue!=null && showForm.ToDoValue.Name==items.Name">
                                             <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
                                             <a @click="showDepartModal()">(送會其他單位)</a><br>
                                             <div v-if="PetitionsChecked">
@@ -171,12 +171,12 @@
                                         </div>
                                     </div>
                                     <div v-else-if="items.Id == 3 ">
-                                        <label><input type="radio" name="ToDoValue" :value="items.Name" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
-                                        <div v-if="showForm.ToDoValue==items.Name">
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
+                                        <div v-if="showForm.ToDoValue!=null && showForm.ToDoValue.Name==items.Name">
                                             <input type="checkbox" @click="showFilingModal(AgentDecisionChecked)" v-model="AgentDecisionChecked">
                                             <a @click="showFilingModal()" >(依據收文號)</a><br>
                                             <div v-if="AgentDecisionChecked">
-                                                <label>依據收文號 {{form.AgentDecisionPetitionId}}</label>
+                                                <label>依據收文號 {{showForm.AgentDecisionPetitionId}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -315,9 +315,9 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{showForm.ToDoValue}}</label>
+                                <label>{{showForm.ToDoValue.Name}}</label>
                                 <div v-if="form.AgentDecisionPetitionId != null">
-                                    <label>依據簽呈 {{form.AgentDecisionPetitionId}}</label>
+                                    <label>依據簽呈 {{showForm.AgentDecisionPetitionId}}</label>
                                 </div>
                             </td>
                         </tr>
@@ -395,6 +395,7 @@ export default {
                 ProcessingUnits:[],
                 InitUser:'',
                 SignInfo:'',
+                AgentDecisionPetitionId:null,
                 
             },
             filingModel:{
@@ -462,7 +463,8 @@ export default {
             else
             {
                 this.filingModel.show = false;
-                this.form.AgentDecisionPetitionId=null;             
+                this.form.AgentDecisionPetitionId=null;
+                this.showForm.AgentDecisionPetitionId=null;        
             }
         },
         showDepartModal() {
@@ -482,7 +484,8 @@ export default {
         },
         getfilingNum(lastid)
         {
-            this.form.AgentDecisionPetitionId=lastid;  //代為決行的依據收文號
+            this.form.AgentDecisionPetitionId=lastid.Petition.Id; //代為決行的依據收文號
+            this.showForm.AgentDecisionPetitionId=lastid.ShowNumber;  
         },
         getDepartID(departInfo)
         {

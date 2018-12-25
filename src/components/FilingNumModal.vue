@@ -16,14 +16,14 @@
                     </thead>
                     <tbody>
                         <tr v-for="item in items">
-                            <td><input type="radio" :value=item.ShowNumber v-model="form.filingID"></td>
+                            <td><input type="radio" :value=item v-model="form.filing"></td>
                             <td>{{ item.ShowNumber }}</td>
                             <td>{{ item.Petition.Purport }}</td>
                         </tr>
                     </tbody>
                 </table>
             </form>
-            <button class="btn btn-primary" @click="onsubmit(form.filingID)">確認</button>
+            <button class="btn btn-primary" @click="onsubmit(form.filing)">確認</button>
         </div>
     </modal>
 </template>
@@ -58,7 +58,7 @@
                 showModalStatus: false,
                 form:{
                     according:1,
-                    filingID:null,
+                    filing:null,
                 },
                 items:[]
             };
@@ -77,7 +77,7 @@
             },
             resetform(){
                 this.form.according=1;
-                this.form.filingID=null;
+                this.form.filing=null;
             },
             async getArticleNumbers()
             {
