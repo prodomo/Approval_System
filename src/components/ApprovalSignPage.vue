@@ -7,7 +7,12 @@
                     
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{form.ReferencePetitionId}}辦理</th></tr>
+                        <tr>
+                            <div v-if="form.ReferencePetition.ArticleNumber != null">
+                                
+                            <th colspan="8">本文，依據{{form.ReferencePetition}}辦理</th>
+                            </div>
+                        </tr>
                         <tr>
                             <th>簽呈號</th>
                             <td colspan>
@@ -15,7 +20,9 @@
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <label>{{form.ReferencePetitionId}}</label>
+                                <div v-if="form.ReferencePetition.ArticleNumber!=null">
+                                    <label>{{form.ReferencePetition.ArticleNumber.ShowNumber}}</label>
+                                </div>
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -128,7 +135,7 @@
                                 <th>常用詞彙</th>
                                 <td colspan="7">
                                     <template v-for="vacabulary in PetitionCommonVocabulary">
-                                        <label><input type="checkbox" value="vacabulary.Name" v-model="words"/>{{vacabulary.Name}}</label>
+                                        <label><input type="checkbox" :value="vacabulary.Name" v-model="words" @change="addword(vacabulary.Name)"/>{{vacabulary.Name}}</label>
                                     </template>
                                 </td>
                             </tr>
@@ -140,14 +147,14 @@
                                     <label><input type="checkbox" name="trace" value="座談會宣導" v-model="trace"/>座談會宣導</label>
                                 </td>
                             </tr>
-                        <tr>
+                        <tr v-if="form.PetitionComments.length!=0">
                             <th>簽核內容</th>
                             <td colspan="7">
                                 <textarea class="form-control" rows="10" aria-label="With textarea" v-model="showForm.SignInfo" name="SignInfo" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`SignInfo:required`)" class="error">{{"請輸入簽核內容"}}</span>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="form.PetitionComments.length!=0">
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
@@ -187,23 +194,33 @@
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="form.PetitionComments.length!=0">
                             <th>簽搞併陳</th>
                             <td colspan="7"></td>
                         </tr>
 
                         </tbody>
-                        <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary" @click="next">存草稿</btn>
-                        <btn class="btn btn-primary" @click="next">預覽</btn>
-                        </td></tr>
+                        <tr v-if="form.PetitionComments.length!=0">
+                            <td colspan="8" class="button">
+                            <btn class="btn btn-primary" @click="next">存草稿</btn>
+                            <btn class="btn btn-primary" @click="next">預覽</btn>
+                            </td>
+                        </tr>
+                        <tr v-if="form.PetitionComments.length==0">
+                            <td colspan="8" class="button">
+                            <btn class="btn btn-primary" @click="goMainPage">回主選單</btn>
+                            </td>
+                        </tr>
                     </table>
                     
                 </div>
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><th colspan="8"  v-if="form.ReferencePetitionId!=null">本文，依據{{form.ReferencePetitionId}}辦理</th></tr>
+                        <tr><div v-if="form.ReferencePetition.ArticleNumber !=null">
+                            <th colspan="8">本文，依據{{form.ReferencePetition.ArticleNumber.ShowNumber}}辦理</th>
+                            </div>                        
+                        </tr>
                         <tr>
                             <th>簽呈號</th>
                             <td colspan>
@@ -211,7 +228,9 @@
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <label>{{form.ReferencePetitionId}}</label>
+                                <div v-if="form.ReferencePetition.ArticleNumber!=null">
+                                    <label>{{form.ReferencePetition.ArticleNumber.ShowNumber}}</label>
+                                </div>
                             </td>
                             <th>建檔日期</th>
                             <td>
@@ -370,7 +389,7 @@ export default {
             PetitionsChecked:false,
             AgentDecisionChecked:false,
             form:{
-                ReferencePetitionId:null,
+                ReferencePetition:null,
                 ArticleNumberId:null,
                 PriorityId:1,
                 SecretLevelId:1,
@@ -496,6 +515,21 @@ export default {
             {
                 this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
                 this.showForm.ProcessingUnits.push({Name: departInfo[i].Name});
+            }
+        },
+        addword(word)
+        {
+            if(this.words.includes(word))
+            {
+                this.showForm.SignInfo += word;
+            }
+            else
+            {
+                while(this.showForm.SignInfo.includes(word))
+                {
+                    var temp = this.showForm.SignInfo.replace(word, "");
+                    this.showForm.SignInfo = temp;
+                }
             }
         },
         async save()
@@ -626,7 +660,7 @@ export default {
                 if(res.Status==0)
                 {
                     const data = res.Data;
-                    this.form.ReferencePetitionId = data.Row.ReferencePetitionId;
+                    this.form.ReferencePetition = data.Row.ReferencePetition;
                     this.form.SecretLevelId = data.Row.SecretLevelId;
                     this.form.ISOTypeId = data.Row.ISOTypeId;
                     this.form.PriorityId = data.Row.PriorityId;
@@ -648,6 +682,11 @@ export default {
                     for(i=0; i<this.form.DepartmentPetitions.length; i++)
                     {
                         this.showForm.ProcessingUnits.push({Name: this.form.DepartmentPetitions[i].Department.Name});
+                    }
+
+                    if(this.form.PetitionComments.length==0)
+                    {
+                        
                     }
                 }
             }
@@ -738,6 +777,12 @@ export default {
             else if (this.form.ISOTypeId ==4)
                 this.textForm.IsoValue='特素件';
         },
+        async goMainPage()
+        {
+            this.$router.push({
+                        path: `/mainPage`
+                    });
+        }
     },
     async mounted(){
         await this.getApprovalInfo();
