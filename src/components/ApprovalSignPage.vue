@@ -8,10 +8,7 @@
                     <table class="table table-bordered">
                         <tbody>
                         <tr>
-                            <div v-if="form.ReferencePetition.ArticleNumber != null">
-                                
-                            <th colspan="8">本文，依據{{form.ReferencePetition}}辦理</th>
-                            </div>
+                            <th colspan="8" v-if="form.ReferencePetition!=null && form.ReferencePetition.ArticleNumber != null">本文，依據{{form.ReferencePetition.ArticleNumber.ShowNumber}}辦理</th>
                         </tr>
                         <tr>
                             <th>簽呈號</th>
@@ -20,7 +17,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <div v-if="form.ReferencePetition.ArticleNumber!=null">
+                                <div v-if="form.ReferencePetition!=null && form.ReferencePetition.ArticleNumber!=null">
                                     <label>{{form.ReferencePetition.ArticleNumber.ShowNumber}}</label>
                                 </div>
                             </td>
@@ -114,7 +111,7 @@
                             
                         <table  class="table table-bordered">
                             <tbody>
-                            <tr class="status-table">
+                            <tr class="status-table" v-bind:class="{'status-table-gray' : item.IsClear}">
                                 <th>
                                     <label>{{item.Layer.Name}}</label>
                                 </th>
@@ -217,9 +214,8 @@
                 <div v-if="step==2">
                     <table class="table table-bordered">
                         <tbody>
-                        <tr><div v-if="form.ReferencePetition.ArticleNumber !=null">
-                            <th colspan="8">本文，依據{{form.ReferencePetition.ArticleNumber.ShowNumber}}辦理</th>
-                            </div>                        
+                        <tr>
+                            <th colspan="8" v-if="form.ReferencePetition!=null && form.ReferencePetition.ArticleNumber != null">本文，依據{{form.ReferencePetition.ArticleNumber.ShowNumber}}辦理</th>                     
                         </tr>
                         <tr>
                             <th>簽呈號</th>
@@ -228,7 +224,7 @@
                             </td>
                             <th>依據收文號</th>
                             <td colspan>
-                                <div v-if="form.ReferencePetition.ArticleNumber!=null">
+                                <div v-if="form.ReferencePetition!=null && form.ReferencePetition.ArticleNumber!=null">
                                     <label>{{form.ReferencePetition.ArticleNumber.ShowNumber}}</label>
                                 </div>
                             </td>
@@ -314,7 +310,7 @@
                         <div v-for="item in Commnets">
                         <table  class="table table-bordered">
                             <tbody>
-                            <tr class="status-table">
+                            <tr class="status-table" v-bind:class="{'status-table-gray' : item.IsClear}">
                                 <th>
                                     <label>{{item.Layer.Name}}</label>
                                 </th>
@@ -356,7 +352,6 @@
         </section>
         <filing-num-modal v-bind:modeID="2" v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
         <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
-        <!-- <label>{{Commnets}}</label> -->
     </div>
 
 </template>
@@ -400,7 +395,7 @@ export default {
                 LayerOptionId:null,
                 State:'',
                 DepartmentPetitions:[],
-                PetitionComments:null,
+                PetitionComments:[],
                 AgentDecisionPetitionId:null,
             },
             showForm:{
@@ -684,10 +679,6 @@ export default {
                         this.showForm.ProcessingUnits.push({Name: this.form.DepartmentPetitions[i].Department.Name});
                     }
 
-                    if(this.form.PetitionComments.length==0)
-                    {
-                        
-                    }
                 }
             }
             catch(err)
@@ -821,18 +812,21 @@ export default {
         padding-right:10px;
     }
 
-    th{
+    th, .th{
         text-align: center;
         padding-top: 15px !important;
         vertical-align: bottom;
     }
-    td{
+    td, .td{
         text-align: left;
         vertical-align: bottom;
 
     }
     .status-table{
         background-color:#ffffcc ;
+    }
+    .status-table-gray{
+        background-color:lightgray ;
     }
     .status-table>td{
        text-align: left !important;
