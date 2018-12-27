@@ -125,7 +125,9 @@
                         <tr>
                             <th>簽搞併陳</th>
                             <td colspan="7">
-                                <input type="checkbox">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)
+                                <input type="checkbox" v-model="isfileUpload">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)
+                                <input type="file" ref="file" @change="selectFile"> 
+                                    
                             </td>
                         </tr>
 
@@ -294,6 +296,8 @@ export default {
             showModalStatus: false,
             sending: false,
             PetitionsChecked:false,
+            isfileUpload:false,
+            file:'',
             form:{
                 ReferencePetitionId:null,
                 ArticleNumberId:null,
@@ -622,6 +626,35 @@ export default {
             else if (this.form.ISOTypeId ==4)
                 this.textForm.IsoValue='特素件';
         },
+        selectFile()
+        {
+            const data = this.$refs.file.files[0];
+            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+            const MAX_SIZE = 5000*1000;
+            const tooLarge = data.size > MAX_SIZE;
+
+            this.file = data;
+            if(allowTypes.includes(data.type) && !tooLarge){
+                this.file = data;
+            }
+            else
+            {
+                if(tooLarge)
+                {
+                    this.$toast.error({
+                        title: '失敗訊息',
+                        message: '檔案太大'
+                        });
+                }
+                else{
+                    this.$toast.error({
+                        title: '失敗訊息',
+                        message: '資料格式不符'
+                        });
+                }
+            }
+
+        }
     },
     async mounted(){
         this.getOptionItems();
