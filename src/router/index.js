@@ -6,6 +6,7 @@ import ApprovalQueryPage from '@/components/ApprovalQueryPage'
 import ApprovalSignPage from '@/components/ApprovalSignPage'
 import AnnouncementCreatePage from '@/components/AnnouncementCreatePage'
 import AnnouncementQueryPage from '@/components/AnnouncementQueryPage'
+import uploadSingleFile from '@/components/uploadSingleFile'
 import AppLayout from '@/components/AppLayout';
 import LoginPage from '@/components/LoginPage';
 import beforeEach from '@/router/beforeEach';
@@ -82,6 +83,11 @@ const router = new Router({
           path: '/approvalSignPage/:apID(\\d*?)',
           name: 'ApprovalSignPage',
           component: ApprovalSignPage
+        },
+        {
+          path: '/temp',
+          name: 'uploadSingleFile',
+          component: uploadSingleFile
         },
         
     ]

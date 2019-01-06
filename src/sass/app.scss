@@ -4,12 +4,21 @@ body, #app{
   font-family:      "Microsoft JhengHei", serif;
   font-size: 100%
 }
-h1, h2, h3, h4, h5, h6, button, label, option, a, tr, th, td,
-.h1, .h2, .h3, .h4, .h5, .h6, .button, .label, .option, .a, .tr, .th, .td{
+
+ button, label, option, a, tr, th, td, btn,
+.button, .label, .option, .a, .tr, .th, .td, .btn{
   font-family: "Microsoft JhengHei", serif !important;
   margin:      0;
-  font-size: 100%
+  font-size: 14px;
 }
+
+h1, h2, h3, h4, h5, h6, tr, th, td, li,
+.h1, .h2, .h3, .h4, .h5, .h6, .tr, .th, .td, .li{
+
+  font-size: 120%;
+}
+
+
 .main-header .logo{
   font-family: "Microsoft JhengHei", serif;
 }

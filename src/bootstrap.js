@@ -8,6 +8,13 @@ import VeeValidate from 'vee-validate';
 import axios from 'axios';
 import VueLocalStorage from 'vue-localstorage';
 import '@/lib/mixin';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCoffee)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueLocalStorage);
 Vue.config.productionTip = false;

@@ -123,11 +123,19 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>簽搞併陳</th>
+                            <th rowspan="2">簽搞併陳</th>
                             <td colspan="7">
-                                <input type="checkbox" v-model="isfileUpload">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)
-                                <input type="file" ref="file" @change="selectFile"> 
-                                    
+                                <input type="checkbox" v-model="isfileUpload">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)<br>
+                            </td>                    
+                        </tr>
+                        <tr>
+                            <td>主文檔案:</td>
+                            <td colspan="2">
+                                <upload-single-file></upload-single-file>
+                            </td>
+                            <td>附件檔案:</td>
+                            <td colspan="3">
+                                <upload-multiple-file></upload-multiple-file>
                             </td>
                         </tr>
 
@@ -280,6 +288,8 @@
 import FilingNumModal from "@/components/FilingNumModal";
 import DepartmentSelectModal from "@/components/DepartmentSelectModal";
 import SystemHeader from '@/components/SystemHeader';
+import uploadSingleFile from '@/components/uploadSingleFile';
+import uploadMultipleFile from '@/components/uploadMultipleFile';
 import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
@@ -287,7 +297,7 @@ import $ from 'jquery';
 
 export default {
     name: 'ApprovalCreateSinglePage',
-    components:{FilingNumModal, SystemHeader, DepartmentSelectModal},
+    components:{FilingNumModal, SystemHeader, DepartmentSelectModal, uploadSingleFile, uploadMultipleFile},
     data(){
         return{
             step:1,
@@ -297,7 +307,8 @@ export default {
             sending: false,
             PetitionsChecked:false,
             isfileUpload:false,
-            file:'',
+            mainfile:'',
+            annexfiles:[],
             form:{
                 ReferencePetitionId:null,
                 ArticleNumberId:null,
@@ -626,35 +637,6 @@ export default {
             else if (this.form.ISOTypeId ==4)
                 this.textForm.IsoValue='特素件';
         },
-        selectFile()
-        {
-            const data = this.$refs.file.files[0];
-            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-            const MAX_SIZE = 5000*1000;
-            const tooLarge = data.size > MAX_SIZE;
-
-            this.file = data;
-            if(allowTypes.includes(data.type) && !tooLarge){
-                this.file = data;
-            }
-            else
-            {
-                if(tooLarge)
-                {
-                    this.$toast.error({
-                        title: '失敗訊息',
-                        message: '檔案太大'
-                        });
-                }
-                else{
-                    this.$toast.error({
-                        title: '失敗訊息',
-                        message: '資料格式不符'
-                        });
-                }
-            }
-
-        }
     },
     async mounted(){
         this.getOptionItems();
