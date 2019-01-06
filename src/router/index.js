@@ -7,6 +7,9 @@ import ApprovalSignPage from '@/components/ApprovalSignPage'
 import AnnouncementCreatePage from '@/components/AnnouncementCreatePage'
 import AnnouncementQueryPage from '@/components/AnnouncementQueryPage'
 import uploadSingleFile from '@/components/uploadSingleFile'
+import sendApprovalToOther from '@/components/sendApprovalToOther'
+import InnerAnnouncement from '@/components/InnerAnnouncement'
+import OuterDocument from '@/components/OuterDocument'
 import AppLayout from '@/components/AppLayout';
 import LoginPage from '@/components/LoginPage';
 import beforeEach from '@/router/beforeEach';
@@ -88,6 +91,21 @@ const router = new Router({
           path: '/temp',
           name: 'uploadSingleFile',
           component: uploadSingleFile
+        },
+        {
+          path: '/temp1',
+          name: 'sendApprovalToOther',
+          component: sendApprovalToOther
+        },
+        {
+          path: '/temp2',
+          name: 'InnerAnnouncement',
+          component: InnerAnnouncement
+        },
+        {
+          path: '/temp3',
+          name: 'OuterDocument',
+          component: OuterDocument
         },
         
     ]

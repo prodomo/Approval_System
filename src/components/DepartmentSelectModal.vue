@@ -102,8 +102,6 @@
                     alert(err.message);
                     this.guestRedirectHome(err.response.status);
                 }
-
-
             },
         },
     }

@@ -2,7 +2,6 @@
     
     <form enctype="multipart/form-data">
         <div class="field">
-            <!-- <label for="file" class="label">upload File</label> -->
             <input multiple type="file" ref="files" @change="selectFile" >
         </div>
 
@@ -51,15 +50,15 @@ export default {
         },
 
         validate(file){
-            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/jpeg", "image/png"];
             const MAX_SIZE = 5000*1000;
 
             if(file.size > MAX_SIZE){
-                return "file too large!";
+                return "檔案太大!";
             }
 
             if(!allowTypes.includes(file.type)){
-                return "file type is not allow!";
+                return "格式不符!";
             }
 
             return "";
@@ -69,8 +68,6 @@ export default {
         cleanfile(index)
         {
             this.files.splice(index, 1);
-            console.log(this.files);
-            console.log(this.$refs.files.value);
             this.$refs.files.value='';
         }
     }

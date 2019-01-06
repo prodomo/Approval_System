@@ -2,7 +2,6 @@
     
     <form enctype="multipart/form-data">
         <div class="field">
-            <!-- <label for="file" class="label">upload File</label> -->
             <input type="file" ref="file" @change="selectFile" >
         </div>
 
@@ -40,7 +39,7 @@ export default {
         selectFile()
         {
             const data = this.$refs.file.files[0];
-            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+            const allowTypes=["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/jpeg", "image/png"];
             const MAX_SIZE = 5000*1000;
             const tooLarge = data.size > MAX_SIZE;
 
