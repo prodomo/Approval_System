@@ -80,13 +80,16 @@
 
                             <td v-if="approval.ArticleStatus!=null"><a @click="goRoute(approval.Id, approval.ArticleStatus.Id)">{{ approval.ArticleStatus.Name}}</a></td>
                             <td v-else></td>
-
                         </tr>
                     </tbody>
                     </table>
+                    <pagination :direction-links="false" :boundary-links="true" size="sm" v-model="pagination.currentPage" :total-page="pagination.totalPage" :max-size="pagination.maxSize" @change="refresh(pagination.currentPage)"></pagination>
                     </template>
-                        <div v-else style="color:red;">無符合條件之資料!</div>
+                    <div v-else style="color:red;">無符合條件之資料!</div>
+                    
+                    <clip-loader v-if="loading" class="loading" color="gray" size="30px"></clip-loader>
                 </div>
+                
         </section>
     </div>
 </template>
@@ -101,10 +104,17 @@
 
     export default {
         name: 'ApprovalQueryPage',
-        components: {Treeselect, Datepicker, SystemHeader},
+        components: {Treeselect, Datepicker, SystemHeader, ClipLoader},
         data(){
             return{
-                articleStatusId: this.$route.params.articleStatusId ? parseInt(this.$route.params.articleStatusId) : 0,
+                loading: false,
+                articleStatusId: this.$route.params.articleStatusId ? parseInt(this.$route.params.articleStatusId) : 1,
+                mode:1,
+                pagination: {
+                    totalPage: 0,
+                    maxSize: 10,
+                    currentPage: this.$route.params.page ? parseInt(this.$route.params.page) : 1
+                },
                 departID:[],
                 departs:[
                     {id:'運務部', label:'運務部'},
@@ -134,12 +144,15 @@
             },
             async getApprovalLists()
             {
+                this.loading=true;
                 let res = null;
 
                 try{
+                    // mode:1 為簽呈列表模式 mode:2為搜尋模式
                     res = await axios.get(`/api/Petitions`, {params:{
-                        mode:1,
+                        mode: this.mode,
                         articleStatusId: this.articleStatusId,
+                        page : this.pagination.currentPage,
                     }});
 
                     res = res.data;
@@ -147,7 +160,7 @@
                     {
                         const data = res.Data;
                         this.approvalList = data.Items;
-                        
+                        this.pagination.totalPage = data.TotalPage;
                     }
                 }
                 catch(err)
@@ -155,6 +168,7 @@
                     // alert(err.message);
                     this.guestRedirectHome(err.response.status);
                 }
+                this.loading = false;
             },
             async goRoute(id, stateId)
             {
@@ -170,7 +184,16 @@
                         path: `/approvalSignPage/${id}`
                     });
                 }
-            }
+            },
+            refresh(page) {
+                this.pagination.currentPage = page;
+                console.log(page);
+                this.$router.push({
+                    path: `/approvalQuery/${page}`,
+                    
+                });
+            },
+
         },
        async mounted(){
             this.getApprovalLists();
