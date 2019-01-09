@@ -189,7 +189,7 @@
                 this.pagination.currentPage = page;
                 console.log(page);
                 this.$router.push({
-                    path: `/approvalQuery/${page}`,
+                    path: `/approvalQuery/${this.articleStatusId}/${page}`,
                     
                 });
             },

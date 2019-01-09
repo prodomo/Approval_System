@@ -82,10 +82,10 @@
                     this.articleItems = data.Items;
                 }
             },
-            async goRoute(id)
+            async goRoute(articleStatusId)
             {
                 this.$router.push({
-                    path: `/approvalQuery/${id}`
+                    path: `/approvalQuery/${articleStatusId}/1`
                 });
             }
         },

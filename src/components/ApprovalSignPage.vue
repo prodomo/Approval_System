@@ -107,8 +107,7 @@
                         </tr>
                         </tbody>
                         </table>
-                        <div v-for="(item,index) in Commnets ">
-                            
+                        <div v-for="(item,index) in Commnets ">                          
                         <table  class="table table-bordered">
                             <tbody>
                             <tr class="status-table" v-bind:class="{'status-table-gray' : item.IsClear}">
@@ -125,10 +124,9 @@
                             </tr>
                             </tbody>
                         </table>
-                           
                         </div>
                         </td></tr>
-                            <tr  v-if="userName =='楊豐文'">
+                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
                                 <th>常用詞彙</th>
                                 <td colspan="7">
                                     <template v-for="vacabulary in PetitionCommonVocabulary">
@@ -136,7 +134,7 @@
                                     </template>
                                 </td>
                             </tr>
-                            <tr  v-if="userName =='楊豐文'">
+                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
                                 <th>列管追蹤</th>
                                 <td colspan="7">
                                     <label><input type="checkbox" name="trace" value="發文公告" v-model="trace"/>發文公告</label>
@@ -191,9 +189,23 @@
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
-                        <tr v-if="form.PetitionComments.length!=0">
-                            <th>簽搞併陳</th>
-                            <td colspan="7"></td>
+                        <tr v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                            <th rowspan="2">簽搞併陳</th>
+                            <td colspan="7">
+                                <input type="checkbox" v-model="isfileUpload">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)<br>
+                            </td>
+                        </tr>
+                        <tr v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                            <td>主文檔案:</td>
+                            <td colspan="2">
+                                <upload-single-file @getMainFile="getMainFile"></upload-single-file>
+                                <span v-show="mainfile != ''">{{mainfile.name}}</span>
+                            </td>
+                            <td>附件檔案:</td>
+                            <td colspan="3">
+                                <upload-multiple-file @getAnnexFiles="getAnnexFiles" ></upload-multiple-file>
+                                <span v-for="file in annexfiles">{{file.name}}</span>
+                            </td>
                         </tr>
 
                         </tbody>
@@ -324,7 +336,24 @@
                             </tr>
                             </tbody>
                         </table>
-                        
+                        </div>
+                        <div v-if="form.PetitionComments.length!=0">
+                        <table  class="table table-bordered">
+                            <tbody>
+                            <tr class="status-table">
+                                <th>
+                                    <label>{{department}}</label>
+                                </th>
+                                <th>
+                                    <label>{{userName}}</label>
+                                </th>
+                                <td>
+                                    <label>於{{date(form.PetitionComments[form.PetitionComments.length-1].CreatedAt)}}</label><br>
+                                    <label>{{form.PetitionComments[form.PetitionComments.length-1].Comment}}</label>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                         </div>
                         </td></tr>
                         <tr>
@@ -336,10 +365,10 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <th>簽搞併陳</th>
                             <td colspan="7"></td>
-                        </tr>
+                        </tr> -->
 
                         </tbody>
                         <tr><td colspan="8" class="button">
@@ -360,6 +389,8 @@
 import FilingNumModal from "@/components/FilingNumModal";
 import DepartmentSelectModal from "@/components/DepartmentSelectModal";
 import SystemHeader from '@/components/SystemHeader';
+import uploadSingleFile from '@/components/uploadSingleFile';
+import uploadMultipleFile from '@/components/uploadMultipleFile';
 import {mapState} from 'vuex';
 import axios from 'axios';
 import _ from 'lodash';
@@ -368,7 +399,7 @@ import $ from 'jquery';
 
 export default {
     name: 'ApprovalSignPage',
-    components:{FilingNumModal, SystemHeader, DepartmentSelectModal},
+    components:{FilingNumModal, SystemHeader, DepartmentSelectModal, uploadSingleFile, uploadMultipleFile},
     data(){
         return{
             step:1,
@@ -383,6 +414,9 @@ export default {
             PetitionCommonVocabulary :[],
             PetitionsChecked:false,
             AgentDecisionChecked:false,
+            isfileUpload:false,
+            mainfile:'',
+            annexfiles:[],
             form:{
                 ReferencePetition:null,
                 ArticleNumberId:null,
@@ -434,6 +468,7 @@ export default {
         ...mapState({
             userName: state => state.user.user.Name,
             chief: state => state.user.user.Chief,
+            department: state => state.user.user.Department,
         }),
         isDisabled() {
             if(this.form.DepartmentPetitions.length!=0 || this.showForm.ProcessingUnits.length!=0)
@@ -773,6 +808,18 @@ export default {
             this.$router.push({
                         path: `/mainPage`
                     });
+        },
+        getMainFile(file)
+        {
+            console.log(file);
+            this.mainfile = file;
+            console.log(this.mainfile);
+        },
+        getAnnexFiles(files)
+        {
+            console.log(files);
+            this.annexfiles = files;
+            console.log(this.annexfiles);
         }
     },
     async mounted(){

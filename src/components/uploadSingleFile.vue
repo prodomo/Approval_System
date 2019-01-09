@@ -56,7 +56,7 @@ export default {
                 this.invalidMessage="";
                 this.mainfile = data;
             }
-            
+            this.$emit('getMainFile', this.mainfile);
         },
 
         cleanfile()
@@ -64,6 +64,7 @@ export default {
             this.file='';
             this.$refs.file.value='';
             this.mainfile='';
+            this.$emit('getMainFile', this.mainfile);
         }
     }
 

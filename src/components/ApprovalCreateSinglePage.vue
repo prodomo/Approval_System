@@ -131,11 +131,13 @@
                         <tr>
                             <td>主文檔案:</td>
                             <td colspan="2">
-                                <upload-single-file></upload-single-file>
+                                <upload-single-file @getMainFile="getMainFile"></upload-single-file>
+                                <span v-show="mainfile != ''">{{mainfile.name}}</span>
                             </td>
                             <td>附件檔案:</td>
                             <td colspan="3">
-                                <upload-multiple-file></upload-multiple-file>
+                                <upload-multiple-file @getAnnexFiles="getAnnexFiles" ></upload-multiple-file>
+                                <span v-for="file in annexfiles">{{file.name}}</span>
                             </td>
                         </tr>
 
@@ -637,6 +639,19 @@ export default {
             else if (this.form.ISOTypeId ==4)
                 this.textForm.IsoValue='特素件';
         },
+        getMainFile(file)
+        {
+            console.log(file);
+            this.mainfile = file;
+            console.log(this.mainfile);
+        },
+        getAnnexFiles(files)
+        {
+            console.log(files);
+            this.annexfiles = files;
+            console.log(this.annexfiles);
+        }
+
     },
     async mounted(){
         this.getOptionItems();

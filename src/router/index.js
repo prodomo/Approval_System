@@ -53,11 +53,10 @@ const router = new Router({
           component: ApprovalQueryPage
         },
         {
-          path: '/approvalQuery/:articleStatusId(\\d*?):page(\\d*?)',
+          path: '/approvalQuery/:articleStatusId(\\d*?)/:page(\\d*?)',
           name: 'ApprovalQueryPage',
           component: ApprovalQueryPage
         },
-
         {
           path: '/announcementCreate',
           name: 'AnnouncementCreatePage',

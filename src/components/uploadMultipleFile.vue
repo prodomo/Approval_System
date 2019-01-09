@@ -47,6 +47,7 @@ export default {
                     invalidMessage: this.validate(file) 
                 }))
             ]
+            this.$emit('getAnnexFiles', this.files);
         },
 
         validate(file){
@@ -69,7 +70,10 @@ export default {
         {
             this.files.splice(index, 1);
             this.$refs.files.value='';
+            this.$emit('getAnnexFiles', this.files);
         }
+
+        
     }
 
 }
