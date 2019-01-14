@@ -22,6 +22,8 @@
 <script>
 
 import axios from 'axios';
+import {mapState} from 'vuex';
+import _ from 'lodash';
 
 export default {
     name:"uploadSingleFile",
@@ -65,7 +67,7 @@ export default {
             this.$refs.file.value='';
             this.mainfile='';
             this.$emit('getMainFile', this.mainfile);
-        }
+        },
     }
 
 }

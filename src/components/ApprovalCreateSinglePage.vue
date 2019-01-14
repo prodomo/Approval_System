@@ -137,7 +137,7 @@
                             <td>附件檔案:</td>
                             <td colspan="3">
                                 <upload-multiple-file @getAnnexFiles="getAnnexFiles" ></upload-multiple-file>
-                                <span v-for="file in annexfiles">{{file.name}}</span>
+                                <!-- <span v-for="file in annexfiles">{{file.file.name}}<br></span> -->
                             </td>
                         </tr>
 
@@ -475,6 +475,7 @@ export default {
                     
                     const form = _.cloneDeep(this.form);
                     res = await axios.post(`/api/Petitions`, form);
+                    this.sendFiles();
                 }
                 else
                 {
@@ -497,6 +498,7 @@ export default {
                 alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
+            this.sending = false;
 
         },
         async onSubmit()
@@ -514,6 +516,7 @@ export default {
                 else
                 {
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
+                    this.submitFile();
                 }
                 res = res.data;
                 if(res.Status==0)
@@ -594,6 +597,36 @@ export default {
             {
                 alert(err.message);
                 this.guestRedirectHome(err.response.status);
+            }
+        },
+        async sendFiles()
+        {
+            await this.submitFile("Petition", this.mainfile);
+            var i;
+            for(i=0; i<this.annexfiles.length; i++)
+            {
+                console.log(this.annexfiles[i].file);
+                if(this.annexfiles[i].invalidMessage=="")
+                {
+                    await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
+                }
+            }
+            
+        },
+        async submitFile(name, file)
+        {
+            let res = null;
+            this.sending = true;
+            const formData = new FormData();
+            formData.append('file', file);
+            try{
+                    console.log(name);
+                    console.log(file);
+                    var fileGroupName = name;
+                    res = await axios.post(`/api/Attachments/${fileGroupName}/Upload`, formData);
+            }
+            catch(err){
+                 this.guestRedirectHome(err.response.status);
             }
         },
         setPriorityText()

@@ -8,7 +8,7 @@
         <div class="filed">
                 <div class="level-item">
                     <div v-for="(file, index) in files" :key="index">
-                        <label>{{file.name}}</label>
+                        <label>{{file.file.name}}</label>
                         <span v-if="file.invalidMessage" style="color:red;">{{file.invalidMessage}}</span>
                         <a @click.prevent="cleanfile(index)"><i class="fas fa-trash-alt"></i></a>
                     </div>
@@ -41,9 +41,7 @@ export default {
             this.files=[
                 ...this.files,
                 ..._.map(files, file=>({
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
+                    file: file,
                     invalidMessage: this.validate(file) 
                 }))
             ]
