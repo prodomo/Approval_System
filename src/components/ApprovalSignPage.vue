@@ -137,9 +137,10 @@
                             <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
                                 <th>列管追蹤</th>
                                 <td colspan="7">
-                                    <label><input type="checkbox" name="trace" value="發文公告" v-model="trace"/>發文公告</label>
-                                    <label><input type="checkbox" name="trace" value="會議中討論" v-model="trace"/>會議中討論</label>
-                                    <label><input type="checkbox" name="trace" value="座談會宣導" v-model="trace"/>座談會宣導</label>
+                                        <label><input type="radio" :value=null v-model="form.PetitionDecidedStatusId"/>無</label>
+                                    <template v-for="decidedStatus in PetitionDecidedStatus">
+                                        <label><input type="radio" :value="decidedStatus.Id" v-model="form.PetitionDecidedStatusId"/>{{decidedStatus.Name}}</label>
+                                    </template>
                                 </td>
                             </tr>
                         <tr v-if="form.PetitionComments.length!=0">
@@ -365,6 +366,14 @@
                                 </div>
                             </td>
                         </tr>
+                        <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                                <th>列管追蹤</th>
+                                <td colspan="7">
+                                    <div v-if="form.PetitionDecidedStatusId!=null">
+                                        <label>{{PetitionDecidedStatus[form.PetitionDecidedStatusId-1].Name}}</label>
+                                    </div>
+                                </td>
+                            </tr>
                         <!-- <tr>
                             <th>簽搞併陳</th>
                             <td colspan="7"></td>
@@ -412,6 +421,7 @@ export default {
             trace:[],
             Commnets:[],
             PetitionCommonVocabulary :[],
+            PetitionDecidedStatus:[],
             PetitionsChecked:false,
             AgentDecisionChecked:false,
             isfileUpload:false,
@@ -431,6 +441,7 @@ export default {
                 DepartmentPetitions:[],
                 PetitionComments:[],
                 AgentDecisionPetitionId:null,
+                PetitionDecidedStatusId:null,
             },
             showForm:{
                 MainDepart:null,
@@ -760,6 +771,25 @@ export default {
                 this.guestRedirectHome(err.response.status);
             }
         },
+        async getPetitionDecidedStatus()
+        {
+            let res = null;
+            try{
+                res = await axios.get(`/api/PetitionDecidedStatus`);
+                res = res.data;
+                if(res.Status==0)
+                {
+                    const data = res.Data;
+                    this.PetitionDecidedStatus = data.Items;
+                }
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+        },
+
         setPriorityText()
         {
             if (this.form.PriorityId==1)
@@ -829,6 +859,8 @@ export default {
         if(this.userName =='楊豐文')
         {
             this.getPetitionCommonVocabulary();
+            this.getPetitionDecidedStatus();
+            
         }
     }
 }
