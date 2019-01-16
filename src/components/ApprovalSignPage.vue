@@ -102,7 +102,10 @@
                             </th>
                             <td>
                                 <label>於{{date(showForm.Date)}}</label><br>
-                                <label>擬辦{{form.Proposition}}</label>
+                                <label>擬辦{{form.Proposition}}</label><br>
+                                <div v-if="showForm.Attachment != null">
+                                    <label>主文檔案： <a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -119,7 +122,8 @@
                                 </th>
                                 <td>
                                     <label>於{{date(item.CreatedAt)}}</label><br>
-                                    <label>{{item.Comment}}</label>
+                                    <label>{{item.Comment}}</label><br>
+                                    <label>附件檔案： <a @click="downloadFile('PetitionComment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label>
                                 </td>
                             </tr>
                             </tbody>
@@ -148,6 +152,7 @@
                             <td colspan="7">
                                 <textarea class="form-control" rows="10" aria-label="With textarea" v-model="showForm.SignInfo" name="SignInfo" v-validate="'required'"></textarea>
                                 <span v-show="errors.has(`SignInfo:required`)" class="error">{{"請輸入簽核內容"}}</span>
+                                <upload-single-file @getMainFile="getComFile"></upload-single-file>
                             </td>
                         </tr>
                         <tr v-if="form.PetitionComments.length!=0">
@@ -190,7 +195,7 @@
                                 <span v-show="errors.has(`ToDoValue:required`)" class="error">{{"請選擇簽核選項"}}</span>
                             </td>
                         </tr>
-                        <tr v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                        <!-- <tr v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
                             <th rowspan="2">簽搞併陳</th>
                             <td colspan="7">
                                 <input type="checkbox" v-model="isfileUpload">如需『發文』或『公告』，請勾選，並上傳檔案(請注意：單一檔案大小限制為5MB。)<br>
@@ -207,7 +212,7 @@
                                 <upload-multiple-file @getAnnexFiles="getAnnexFiles" ></upload-multiple-file>
                                 <span v-for="file in annexfiles">{{file.name}}</span>
                             </td>
-                        </tr>
+                        </tr> -->
 
                         </tbody>
                         <tr v-if="form.PetitionComments.length!=0">
@@ -426,6 +431,7 @@ export default {
             AgentDecisionChecked:false,
             isfileUpload:false,
             mainfile:'',
+            attachmentFile:'',
             annexfiles:[],
             form:{
                 ReferencePetition:null,
@@ -442,6 +448,7 @@ export default {
                 PetitionComments:[],
                 AgentDecisionPetitionId:null,
                 PetitionDecidedStatusId:null,
+
             },
             showForm:{
                 MainDepart:null,
@@ -454,7 +461,10 @@ export default {
                 ProcessingUnits:[],
                 InitUser:'',
                 SignInfo:'',
+                AttachmentFileID:'',
                 AgentDecisionPetitionId:null,
+                Attachment:null,
+                AttachmentPetitions:null,
                 
             },
             filingModel:{
@@ -577,7 +587,15 @@ export default {
         {
             let res = null;
             this.sending = true;
+
+            var fileID = await this.submitFile("PetitionComment", this.attachmentFile);
+            if(fileID != null)
+            {
+                this.showForm.AttachmentFileID = fileID;
+            }
+
             this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
+            this.form.PetitionComments[0].AttachmentId = this.showForm.AttachmentFileID;
             this.form.LayerOptionId=null;
             try{
                 if(!this.apID)
@@ -645,9 +663,9 @@ export default {
                         title: '成功訊息',
                         message: '送出成功'
                         });
-                    this.$router.push({
-                    path: `/mainPage`,
-                    });
+                    // this.$router.push({
+                    // path: `/mainPage`,
+                    // });
                 }
                 else if(res.Status==-3)
                 {
@@ -656,6 +674,10 @@ export default {
                         message: '此文不能代為決行'
                         });
                 }
+                this.$router.push({
+                    path: `/mainPage`,
+                    });
+                
             }
             catch(err)
             {
@@ -718,6 +740,8 @@ export default {
                     this.form.PetitionComments = data.Row.PetitionComments;
                     this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
                     this.textForm.status = data.Row.ArticleStatus.Name;
+                    this.showForm.Attachment = data.Row.Attachment;
+                    this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
                     
                     var i;
                     for(i=0; i<this.form.DepartmentPetitions.length; i++)
@@ -789,7 +813,29 @@ export default {
                 this.guestRedirectHome(err.response.status);
             }
         },
-
+        async downloadFile(fileGroupName, fileName, downloadFileName)
+        {
+            try
+            {
+                axios({
+                    url: `/api/Attachments/${fileGroupName}/Download/${fileName}`,
+                    method: 'GET',
+                    responseType: 'blob', // important
+                    }).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', downloadFileName); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                    });
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
+        },
         setPriorityText()
         {
             if (this.form.PriorityId==1)
@@ -844,6 +890,35 @@ export default {
             console.log(file);
             this.mainfile = file;
             console.log(this.mainfile);
+        },
+        async getComFile(file)
+        {
+            console.log("getComFile");
+            this.attachmentFile = file;
+        },
+        async submitFile(name, file)
+        {
+            let res = null;
+            this.sending = true;
+            const formData = new FormData();
+            formData.append('file', file);
+            try{
+                    console.log(name);
+                    console.log(file);
+                    var fileGroupName = name;
+                    res = await axios.post(`/api/Attachments/${fileGroupName}/Upload`, formData);
+            }
+            catch(err){
+                 this.guestRedirectHome(err.response.status);
+            }
+            res = res.data;
+            if(res.Status==0)
+            {
+                const data = res.Data;
+                if(data.Row.Id != null)
+                return data.Row.Id;
+            }
+            return null;
         },
         getAnnexFiles(files)
         {

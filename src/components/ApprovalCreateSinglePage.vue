@@ -269,7 +269,14 @@
                         </tr>
                         <tr>
                             <th>簽搞併陳</th>
-                            <td colspan="7"></td>
+                            <td>主文檔案:</td>
+                            <td colspan="2">
+                                <label v-show="mainfile != ''">{{mainfile.name}}</label>
+                            </td>
+                            <td>附件檔案:</td>
+                            <td colspan="3">
+                                <!-- <label v-for="file in annexfiles">{{file.file.name}}<br></label> -->
+                            </td>
                         </tr>
 
                         </tbody>
@@ -323,7 +330,9 @@ export default {
                 LayerOptionId:null,
                 State:'',
                 DepartmentPetitions:[],
-                PetitionComments:[],           
+                PetitionComments:[],
+                AttachmentId:'',
+                AttachmentPetitions:[],
             },
             showForm:{
                 ReferencePetitionShowNumber:null,
@@ -413,6 +422,11 @@ export default {
             this.showForm.ProcessingUnits=[];
             this.apID=null;
             this.step=1;
+            this.form.AttachmentId='';
+            this.form.AttachmentPetitions=[];
+            this.mainfile='';
+            this.annexfiles=[];
+            
 
         },
         showFilingModal() {
@@ -472,13 +486,13 @@ export default {
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
                     }
-                    
+                    await this.sendFiles();
                     const form = _.cloneDeep(this.form);
                     res = await axios.post(`/api/Petitions`, form);
-                    this.sendFiles();
                 }
                 else
                 {
+                    await this.sendFiles();
                     const form = _.cloneDeep(this.form);
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
                 }
@@ -511,12 +525,13 @@ export default {
 
                 if(!this.apID)
                 {
+                    await this.sendFiles();
                     res = await axios.post(`/api/Petitions`, form);
                 }
                 else
                 {
+                    await this.sendFiles();
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
-                    this.submitFile();
                 }
                 res = res.data;
                 if(res.Status==0)
@@ -601,16 +616,26 @@ export default {
         },
         async sendFiles()
         {
-            await this.submitFile("Petition", this.mainfile);
-            var i;
-            for(i=0; i<this.annexfiles.length; i++)
+            var fileID = await this.submitFile("Petition", this.mainfile);
+            if(fileID != null)
             {
-                console.log(this.annexfiles[i].file);
-                if(this.annexfiles[i].invalidMessage=="")
-                {
-                    await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
-                }
+                console.log(fileID);
+                this.form.AttachmentId = fileID;
             }
+            // var i;
+            // for(i=0; i<this.annexfiles.length; i++)
+            // {
+            //     console.log(this.annexfiles[i].file);
+            //     if(this.annexfiles[i].invalidMessage=="")
+            //     {
+            //         var fileIDs = await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
+            //          if(fileIDs != null)
+            //         {
+            //             console.log(fileIDs);
+            //             this.form.AttachmentPetitions.push({AttachmentId: fileIDs});
+            //         }
+            //     }
+            // }
             
         },
         async submitFile(name, file)
@@ -628,6 +653,14 @@ export default {
             catch(err){
                  this.guestRedirectHome(err.response.status);
             }
+            res = res.data;
+            if(res.Status==0)
+            {
+                const data = res.Data;
+                if(data.Row.Id != null)
+                return data.Row.Id;
+            }
+            return null;
         },
         setPriorityText()
         {
