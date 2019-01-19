@@ -132,19 +132,29 @@
                             <td>主文檔案:</td>
                             <td colspan="2">
                                 <upload-single-file @getMainFile="getMainFile"></upload-single-file>
-                                <span v-show="mainfile != ''">{{mainfile.name}}</span>
+                                <!-- <div v-if="mainfile != ''">
+                                    <span>{{mainfile.name}}</span>
+                                </div> -->
+                                <div v-if="showForm.Attachment!='' && mainfile==''">
+                                    <label v-if="showForm.Attachment != null"><a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
+                                </div>
                             </td>
                             <td>附件檔案:</td>
                             <td colspan="3">
                                 <upload-multiple-file @getAnnexFiles="getAnnexFiles" ></upload-multiple-file>
                                 <!-- <span v-for="file in annexfiles">{{file.file.name}}<br></span> -->
+                                <div v-if="showForm.AttachmentPetitions.length!=0 && annexfiles.length==0">
+                                    <div v-for="item in showForm.AttachmentPetitions">
+                                        <label><a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
 
                         </tbody>
                         <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary" @click="next">存草稿</btn>
-                        <btn class="btn btn-primary" @click="next">預覽</btn>
+                        <btn class="btn btn-primary" @click="next(1)">存草稿</btn>
+                        <btn class="btn btn-primary" @click="next(2)">預覽</btn>
                         <btn class="btn btn-primary" @click="reset">作廢</btn>
                         </td></tr>
                     </table>
@@ -271,11 +281,15 @@
                             <th>簽搞併陳</th>
                             <td>主文檔案:</td>
                             <td colspan="2">
-                                <label v-show="mainfile != ''">{{mainfile.name}}</label>
+                                <label v-show="showForm.Attachment != ''"><a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
                             </td>
                             <td>附件檔案:</td>
                             <td colspan="3">
-                                <!-- <label v-for="file in annexfiles">{{file.file.name}}<br></label> -->
+                                <div v-if="showForm.AttachmentPetitions.length!=0">
+                                    <div v-for="item in showForm.AttachmentPetitions">
+                                        <label><a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
 
@@ -344,6 +358,8 @@ export default {
                 showNumber:null,
                 LayerOptions:null,
                 ProcessingUnits:[],
+                Attachment:'',
+                AttachmentPetitions:[],
             },
             filingModel:{
                 show: false,
@@ -377,7 +393,7 @@ export default {
 
     },
     methods:{
-        async next(){
+        async next(type){
             const isPass = await this.$validator.validateAll();
 
             if(isPass!=true){
@@ -386,15 +402,22 @@ export default {
             }
             else
             {
-                this.step++;
-
-                if(this.step==2)
-                {
+                if(this.step==1){
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
                     this.save();
                     this.textForm.status='創稿中';
+
+                    if(type==2)
+                    {
+                        this.step++;
+                    }
+                    else{
+                        this.$router.push({
+                        path: `/mainPage`,
+                        });
+                    }
                 }
             }
         },
@@ -420,6 +443,8 @@ export default {
             this.showForm.showNumber=null;
             this.showForm.LayerOptions=null;
             this.showForm.ProcessingUnits=[];
+            this.showForm.Attachment='';
+            this.showForm.AttachmentPetitions=[];
             this.apID=null;
             this.step=1;
             this.form.AttachmentId='';
@@ -485,15 +510,24 @@ export default {
                         this.form.ArticleNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
+
                     }
                     await this.sendFiles();
+                    this.form.AttachmentId=96;
+                    this.form.AttachmentPetitions=[{AttachmentId: 97}];
                     const form = _.cloneDeep(this.form);
+                    console.log(this.form.AttachmentId);
+                    console.log(this.form.AttachmentPetitions);
                     res = await axios.post(`/api/Petitions`, form);
                 }
                 else
                 {
                     await this.sendFiles();
+                    // this.form.AttachmentId=96;
+                    // this.form.AttachmentPetitions=[{AttachmentId: 97}];
                     const form = _.cloneDeep(this.form);
+                    console.log(this.form.AttachmentId);
+                    console.log(this.form.AttachmentPetitions);
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
                 }
                 res = res.data;
@@ -505,14 +539,18 @@ export default {
                     this.form.ArchiveDate = data.Row.ArchiveDate;
                     this.apID = data.Row.Id;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
+                    this.showForm.Attachment= data.Row.Attachment;
+                    this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
                 }
+                this.sending = false;
             }
             catch(err)
             {
                 alert(err.message);
                 this.guestRedirectHome(err.response.status);
+                this.sending = false;
             }
-            this.sending = false;
+            
 
         },
         async onSubmit()
@@ -525,12 +563,12 @@ export default {
 
                 if(!this.apID)
                 {
-                    await this.sendFiles();
+                    // await this.sendFiles();
                     res = await axios.post(`/api/Petitions`, form);
                 }
                 else
                 {
-                    await this.sendFiles();
+                    // await this.sendFiles();
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
                 }
                 res = res.data;
@@ -583,6 +621,7 @@ export default {
         },
         async getApprovalInfo()
         {
+            this.sending=true;
             let res = null;
             try{
 
@@ -605,37 +644,57 @@ export default {
                     this.showForm.showNumberText = data.Row.ArticleNumber.ShowNumberText;
                     this.showForm.InitUser = data.Row.User.Name;
                     this.showForm.MainDepart = data.Chief[0];
-                    
+                    this.showForm.Attachment = data.Row.Attachment;
+                    this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
+                    this.form.AttachmentId = data.Row.Attachment.Id;
+                    for(var i=0; i<data.Row.AttachmentPetitions.length; i++)
+                    {
+                        console.log(data.Row.AttachmentPetitions[i].Attachment.Id);
+                        this.form.AttachmentPetitions.push({AttachmentId: data.Row.AttachmentPetitions[i].Attachment.Id});
+                    }
+                    this.sending=false;
                 }
             }
             catch(err)
             {
                 alert(err.message);
                 this.guestRedirectHome(err.response.status);
+                this.sending=false;
             }
         },
         async sendFiles()
         {
-            var fileID = await this.submitFile("Petition", this.mainfile);
-            if(fileID != null)
+            
+            if(this.showForm.Attachment =='' && this.mainfile!='')
             {
-                console.log(fileID);
-                this.form.AttachmentId = fileID;
+                console.log("call submitFile mainfile");
+                // var fileID = await this.submitFile("Petition", this.mainfile);
             }
-            // var i;
-            // for(i=0; i<this.annexfiles.length; i++)
-            // {
-            //     console.log(this.annexfiles[i].file);
-            //     if(this.annexfiles[i].invalidMessage=="")
-            //     {
-            //         var fileIDs = await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
-            //          if(fileIDs != null)
-            //         {
-            //             console.log(fileIDs);
-            //             this.form.AttachmentPetitions.push({AttachmentId: fileIDs});
-            //         }
-            //     }
-            // }
+
+            if(this.showForm.AttachmentPetitions.length==0 && this.annexfiles.length!=0)
+            {
+                console.log("call submitFile AttachmentPetitions");
+                this.form.AttachmentPetitions=[];
+                if(fileID != null)
+                {
+                    console.log(fileID);
+                    this.form.AttachmentId = fileID;
+                }
+                // var i;
+                // for(i=0; i<this.annexfiles.length; i++)
+                // {
+                //     console.log(this.annexfiles[i].file);
+                //     if(this.annexfiles[i].invalidMessage=="")
+                //     {
+                //         var fileIDs = await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
+                //         if(fileIDs != null)
+                //         {
+                //             console.log(fileIDs);
+                //             this.form.AttachmentPetitions.push({AttachmentId: fileIDs});
+                //         }
+                //     }
+                // }
+            }
             
         },
         async submitFile(name, file)
@@ -661,6 +720,29 @@ export default {
                 return data.Row.Id;
             }
             return null;
+        },
+        async downloadFile(fileGroupName, fileName, downloadFileName)
+        {
+            try
+            {
+                axios({
+                    url: `/api/Attachments/${fileGroupName}/Download/${fileName}`,
+                    method: 'GET',
+                    responseType: 'blob', // important
+                    }).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', downloadFileName); //or any other extension
+                    document.body.appendChild(link);
+                    link.click();
+                    });
+            }
+            catch(err)
+            {
+                alert(err.message);
+                this.guestRedirectHome(err.response.status);
+            }
         },
         setPriorityText()
         {
@@ -693,26 +775,28 @@ export default {
         },
         setISOText()
         {
-            if (this.form.ISOTypeId ==1)
-                this.textForm.IsoValue='普通';
+            if (this.form.ISOTypeId ==null)
+                this.textForm.IsoValue='無';
+
+            else if (this.form.ISOTypeId ==1)
+                this.textForm.IsoValue='新增';
 
             else if (this.form.ISOTypeId ==2)
-                this.textForm.IsoValue='速件';
+                this.textForm.IsoValue='修訂';
 
             else if (this.form.ISOTypeId ==3)
-                this.textForm.IsoValue='最速件';
-
-            else if (this.form.ISOTypeId ==4)
-                this.textForm.IsoValue='特素件';
+                this.textForm.IsoValue='廢止'; 
         },
         getMainFile(file)
         {
+            this.showForm.Attachment='';
             console.log(file);
             this.mainfile = file;
             console.log(this.mainfile);
         },
         getAnnexFiles(files)
         {
+            this.showForm.AttachmentPetitions=[];
             console.log(files);
             this.annexfiles = files;
             console.log(this.annexfiles);

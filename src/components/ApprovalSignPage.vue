@@ -106,6 +106,11 @@
                                 <div v-if="showForm.Attachment != null">
                                     <label>主文檔案： <a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
                                 </div>
+                                <div v-if="showForm.AttachmentPetitions!=[]">
+                                    <div v-for="item in showForm.AttachmentPetitions">
+                                        <label><a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -217,8 +222,8 @@
                         </tbody>
                         <tr v-if="form.PetitionComments.length!=0">
                             <td colspan="8" class="button">
-                            <btn class="btn btn-primary" @click="next">存草稿</btn>
-                            <btn class="btn btn-primary" @click="next">預覽</btn>
+                            <btn class="btn btn-primary" @click="next(1)">存草稿</btn>
+                            <btn class="btn btn-primary" @click="next(2)">預覽</btn>
                             </td>
                         </tr>
                         <tr v-if="form.PetitionComments.length==0">
@@ -463,8 +468,8 @@ export default {
                 SignInfo:'',
                 AttachmentFileID:'',
                 AgentDecisionPetitionId:null,
-                Attachment:null,
-                AttachmentPetitions:null,
+                Attachment:'',
+                AttachmentPetitions:[],
                 
             },
             filingModel:{
@@ -477,9 +482,9 @@ export default {
             },
             textForm:
             {
-                priority:'普通件',
-                Confidentiality:'普通',
-                IsoValue:'無',
+                priority:'',
+                Confidentiality:'',
+                IsoValue:'',
                 status:'',
             },
 
@@ -503,7 +508,7 @@ export default {
 
     },
     methods:{
-        async next(){
+        async next(type){
             const isPass = await this.$validator.validateAll();
             
 
@@ -512,13 +517,20 @@ export default {
                 // alert(JSON.stringify(this.$validator.errors.items));
             }
             else
-            {
-                this.step++;
-
-                if(this.step==2)
-                {
+            {   
+                if(this.step==1){
                     await this.save();
                     this.getPetitionComment();
+
+                    if(type==2)
+                    {
+                    this.step++;
+                    }
+                    else{
+                        this.$router.push({
+                        path: `/mainPage`,
+                        });
+                    }
                 }
             }
         },
@@ -743,11 +755,17 @@ export default {
                     this.showForm.Attachment = data.Row.Attachment;
                     this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
                     
+                    this.setPriorityText();
+                    this.setConfidentialityText();
+                    this.setISOText();
+
                     var i;
+                    console.log(this.form.DepartmentPetitions);
                     for(i=0; i<this.form.DepartmentPetitions.length; i++)
                     {
                         this.showForm.ProcessingUnits.push({Name: this.form.DepartmentPetitions[i].Department.Name});
                     }
+
 
                 }
             }
@@ -867,17 +885,17 @@ export default {
         },
         setISOText()
         {
-            if (this.form.ISOTypeId ==1)
-                this.textForm.IsoValue='普通';
+            if (this.form.ISOTypeId ==null)
+                this.textForm.IsoValue='無';
+
+            else if (this.form.ISOTypeId ==1)
+                this.textForm.IsoValue='新增';
 
             else if (this.form.ISOTypeId ==2)
-                this.textForm.IsoValue='速件';
+                this.textForm.IsoValue='修訂';
 
             else if (this.form.ISOTypeId ==3)
-                this.textForm.IsoValue='最速件';
-
-            else if (this.form.ISOTypeId ==4)
-                this.textForm.IsoValue='特素件';
+                this.textForm.IsoValue='廢止'; 
         },
         async goMainPage()
         {
