@@ -106,7 +106,7 @@
                                 <div v-if="showForm.Attachment != null">
                                     <label>主文檔案： <a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
                                 </div>
-                                <div v-if="showForm.AttachmentPetitions!=[]">
+                                <div v-if="showForm.AttachmentPetitions.length>0">
                                     <div v-for="item in showForm.AttachmentPetitions">
                                         <label><a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
                                     </div>
@@ -128,14 +128,14 @@
                                 <td>
                                     <label>於{{date(item.CreatedAt)}}</label><br>
                                     <label>{{item.Comment}}</label><br>
-                                    <label>附件檔案： <a @click="downloadFile('PetitionComment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label>
+                                    <label>附件檔案： <a v-if="item.Attachment!=null" @click="downloadFile('PetitionComment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                         </div>
                         </td></tr>
-                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length>0">
                                 <th>常用詞彙</th>
                                 <td colspan="7">
                                     <template v-for="vacabulary in PetitionCommonVocabulary">
@@ -143,7 +143,7 @@
                                     </template>
                                 </td>
                             </tr>
-                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
+                            <tr  v-if="userName =='楊豐文' && form.PetitionComments.length>0">
                                 <th>列管追蹤</th>
                                 <td colspan="7">
                                         <label><input type="radio" :value=null v-model="form.PetitionDecidedStatusId"/>無</label>
@@ -152,7 +152,7 @@
                                     </template>
                                 </td>
                             </tr>
-                        <tr v-if="form.PetitionComments.length!=0">
+                        <tr v-if="form.PetitionComments.length>0">
                             <th>簽核內容</th>
                             <td colspan="7">
                                 <textarea class="form-control" rows="10" aria-label="With textarea" v-model="showForm.SignInfo" name="SignInfo" v-validate="'required'"></textarea>
@@ -160,33 +160,33 @@
                                 <upload-single-file @getMainFile="getComFile"></upload-single-file>
                             </td>
                         </tr>
-                        <tr v-if="form.PetitionComments.length!=0">
+                        <tr v-if="form.PetitionComments.length>0">
                             <th>簽核選項</th>
                             <td colspan="7">
                                 <div v-for="items in showForm.LayerOptions">
-                                    <div v-if="items.Name == '陳核送出（總經理室主任核稿）'">
+                                    <div v-if="items.Name === '陳核送出（總經理室主任核稿）'">
                                          <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" :disabled="isDisabled">{{items.Name}}</label><br>
                                     </div>
-                                    <div v-else-if="items.Name =='送會其他單位'">
-                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal()" v-validate="'required'" >{{items.Name}}</label><br>
-                                        <div v-if="showForm.ProcessingUnits.length !=0">
-                                            <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
+                                    <div v-else-if="items.Id ===5">
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal(null, 1, showForm.DepartmentLevel)" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <div v-if="showForm.ProcessingUnits.length >0">
+                                            <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
                                         </div>
                                     </div>
                                     <div v-else-if="items.Id == 18 ">
                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
                                         <div v-if="showForm.ToDoValue!=null && showForm.ToDoValue.Name==items.Name">
-                                            <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModal(PetitionsChecked)">
-                                            <a @click="showDepartModal()">(送會其他單位)</a><br>
+                                            <input type="checkbox" v-model="PetitionsChecked" @click="showDepartModalchecked(PetitionsChecked, null, 1, showForm.DepartmentLevel)">
+                                            <a @click="showDepartModal(null, 1, showForm.DepartmentLevel)">(送會其他單位)</a><br>
                                             <div v-if="PetitionsChecked">
-                                                <label v-for="user in showForm.ProcessingUnits">{{user.Name}} ,</label>
+                                                <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div v-else-if="items.Id == 3 ">
                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'" >{{items.Name}}</label>
                                         <div v-if="showForm.ToDoValue!=null && showForm.ToDoValue.Name==items.Name">
-                                            <input type="checkbox" @click="showFilingModal(AgentDecisionChecked)" v-model="AgentDecisionChecked">
+                                            <input type="checkbox" @click="showFilingModalchecked(AgentDecisionChecked)" v-model="AgentDecisionChecked">
                                             <a @click="showFilingModal()" >(依據收文號)</a><br>
                                             <div v-if="AgentDecisionChecked">
                                                 <label>依據收文號 {{showForm.AgentDecisionPetitionId}}</label>
@@ -399,7 +399,8 @@
             </div>
         </section>
         <filing-num-modal v-bind:modeID="2" v-model="filingModel.show" @getfilingNum="getfilingNum"></filing-num-modal>
-        <department-select-modal v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
+        <department-select-modal v-bind:departmentId="departmentModel.departmentId" v-bind:isChief="departmentModel.isChief"
+        v-bind:departmentLevel="departmentModel.departmentLevel" v-model="departmentModel.show" @getDepartID="getDepartID"></department-select-modal>
     </div>
 
 </template>
@@ -449,7 +450,7 @@ export default {
                 Proposition:'',
                 LayerOptionId:null,
                 State:'',
-                DepartmentPetitions:[],
+                PetitionProfessions:[],
                 PetitionComments:[],
                 AgentDecisionPetitionId:null,
                 PetitionDecidedStatusId:null,
@@ -470,15 +471,20 @@ export default {
                 AgentDecisionPetitionId:null,
                 Attachment:'',
                 AttachmentPetitions:[],
+                DepartmentLevel:'',
                 
             },
             filingModel:{
                 show: false,
                 rid: null
+
             },
             departmentModel:{
                 show: false,
-                rid: null
+                rid: null,
+                departmentId:null,
+                isChief:null,
+                departmentLevel:null,
             },
             textForm:
             {
@@ -497,7 +503,7 @@ export default {
             department: state => state.user.user.Department,
         }),
         isDisabled() {
-            if(this.form.DepartmentPetitions.length!=0 || this.showForm.ProcessingUnits.length!=0)
+            if(this.form.PetitionProfessions.length!=0 || this.showForm.ProcessingUnits.length!=0)
             {
                 return true;
             }
@@ -537,7 +543,7 @@ export default {
         showFilingModal() {
             this.filingModel.show = true;
         },
-        showFilingModal(checked) {
+        showFilingModalchecked(checked) {
             if(!checked)
             {
                 this.filingModel.show = true;
@@ -549,10 +555,23 @@ export default {
                 this.showForm.AgentDecisionPetitionId=null;        
             }
         },
-        showDepartModal() {
+        showDepartModal(departID, isCif, departLevel) {
+            
+            console.log("showDepartModal");
+            console.log(departID);
+            console.log(isCif);
+            console.log(departLevel);
+            this.departmentModel.departmentId=departID;
+            this.departmentModel.isChief=isCif;
+            this.departmentModel.departmentLevel=departLevel;
+            
             this.departmentModel.show = true;
         },
-        showDepartModal(checked) {
+        showDepartModalchecked(checked, departID, isCif, departLevel) {
+            console.log("showDepartModalchecked");
+            this.departmentModel.departmentId=departID;
+            this.departmentModel.isChief=isCif;
+            this.departmentModel.departmentLevel=departLevel;
             if(!checked)
             {
                 this.departmentModel.show = true;
@@ -561,7 +580,7 @@ export default {
             {
                 this.departmentModel.show = false;
                 this.showForm.ProcessingUnits=[];
-                this.form.DepartmentPetitions=[];                
+                this.form.PetitionProfessions=[];                
             }
         },
         getfilingNum(lastid)
@@ -569,15 +588,23 @@ export default {
             this.form.AgentDecisionPetitionId=lastid.Petition.Id; //代為決行的依據收文號
             this.showForm.AgentDecisionPetitionId=lastid.ShowNumber;  
         },
-        getDepartID(departInfo)
+        getDepartID(departInfo, type)
         {
+            console.log(departInfo);
             var i;
             this.showForm.ProcessingUnits=[];
-            this.form.DepartmentPetitions=[];
-            for( i=0; i < departInfo.length; i++)
+            this.form.PetitionProfessions=[];
+            if(type == 1) //送會其他單位
             {
-                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
-                this.showForm.ProcessingUnits.push({Name: departInfo[i].Name});
+                for( i=0; i < departInfo.length; i++)
+                {
+                    this.form.PetitionProfessions.push({ProfessionId: departInfo[i].Id});
+                    this.showForm.ProcessingUnits.push({department:departInfo[i].Department.Name ,Name: departInfo[i].Name, User:departInfo[i].User.Name });
+                }
+            }
+            else if(type ==2) //單位內分文
+            {
+                this.showForm.ProcessingUnits.push({department:departInfo[i].Department.Name ,Name: departInfo[i].Name, User:departInfo[i].User.Name });
             }
         },
         addword(word)
@@ -599,8 +626,11 @@ export default {
         {
             let res = null;
             this.sending = true;
+            var fileID;
 
-            var fileID = await this.submitFile("PetitionComment", this.attachmentFile);
+            if(this.attachmentFile!=''){
+                fileID = await this.submitFile("PetitionComment", this.attachmentFile);
+            }
             if(fileID != null)
             {
                 this.showForm.AttachmentFileID = fileID;
@@ -623,7 +653,7 @@ export default {
                         this.form.ArticleNumberId = data.Row.Id;
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
-                        this.form.DepartmentPetitions = this.showForm.ProcessingUnits;
+                        this.form.PetitionProfessions = this.showForm.ProcessingUnits;
                     }
 
                     const form = _.cloneDeep(this.form);
@@ -750,20 +780,20 @@ export default {
                     this.showForm.MainDepart = data.Chief[0];
                     this.showForm.CreateDate = data.Row.CreateDate;
                     this.form.PetitionComments = data.Row.PetitionComments;
-                    this.form.DepartmentPetitions = data.Row.DepartmentPetitions;
+                    this.form.PetitionProfessions = data.Row.PetitionProfessions;
                     this.textForm.status = data.Row.ArticleStatus.Name;
                     this.showForm.Attachment = data.Row.Attachment;
                     this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
-                    
+                    this.showForm.DepartmentLevel = data.Row.Department.DepartmentLevel;
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();
 
                     var i;
-                    console.log(this.form.DepartmentPetitions);
-                    for(i=0; i<this.form.DepartmentPetitions.length; i++)
+                    console.log(this.form.PetitionProfessions);
+                    for(i=0; i<this.form.PetitionProfessions.length; i++)
                     {
-                        this.showForm.ProcessingUnits.push({Name: this.form.DepartmentPetitions[i].Department.Name});
+                        this.showForm.ProcessingUnits.push({department: this.form.PetitionProfessions[i].Department.Name});
                     }
 
 

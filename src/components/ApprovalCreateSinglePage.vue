@@ -343,7 +343,7 @@ export default {
                 Proposition:'',
                 LayerOptionId:null,
                 State:'',
-                DepartmentPetitions:[],
+                PetitionProfessions:[],
                 PetitionComments:[],
                 AttachmentId:'',
                 AttachmentPetitions:[],
@@ -433,7 +433,7 @@ export default {
             this.form.Proposition='';
             this.form.LayerOptionId=null;
             this.form.State='';
-            this.form.DepartmentPetitions=[];
+            this.form.PetitionProfessions=[];
             this.form.PetitionComments=[],
             this.showForm.MainDepart='';
             this.showForm.Date='';
@@ -451,7 +451,8 @@ export default {
             this.form.AttachmentPetitions=[];
             this.mainfile='';
             this.annexfiles=[];
-            
+
+            this.getOptionItems();
 
         },
         showFilingModal() {
@@ -469,7 +470,7 @@ export default {
             {
                 this.departmentModel.show = false;
                 this.showForm.ProcessingUnits=[];
-                this.form.DepartmentPetitions=[];                
+                this.form.PetitionProfessions=[];                
             }
         },
         getfilingNum(lastid)
@@ -482,10 +483,11 @@ export default {
             
             var i;
             this.showForm.ProcessingUnits=[];
-            this.form.DepartmentPetitions=[];
+            this.form.PetitionProfessions=[];
             for( i=0; i < departInfo.length; i++)
             {
-                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
+                console.log(departInfo[i].Id);
+                this.form.PetitionProfessions.push({ProfessionId: departInfo[i].Id});
                 this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
                                                     User: departInfo[i].User});
             }
@@ -663,37 +665,36 @@ export default {
             }
         },
         async sendFiles()
-        {
-            
+        {            
             if(this.showForm.Attachment =='' && this.mainfile!='')
             {
                 console.log("call submitFile mainfile");
-                // var fileID = await this.submitFile("Petition", this.mainfile);
+                var fileID = await this.submitFile("Petition", this.mainfile);
+                if(fileID != null)
+                {
+                    console.log(fileID);
+                    this.form.AttachmentId = fileID;
+                }
             }
 
             if(this.showForm.AttachmentPetitions.length==0 && this.annexfiles.length!=0)
             {
                 console.log("call submitFile AttachmentPetitions");
                 this.form.AttachmentPetitions=[];
-                if(fileID != null)
+                var i;
+                for(i=0; i<this.annexfiles.length; i++)
                 {
-                    console.log(fileID);
-                    this.form.AttachmentId = fileID;
+                    console.log(this.annexfiles[i].file);
+                    if(this.annexfiles[i].invalidMessage=="")
+                    {
+                        var fileIDs = await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
+                        if(fileIDs != null)
+                        {
+                            console.log(fileIDs);
+                            this.form.AttachmentPetitions.push({AttachmentId: fileIDs});
+                        }
+                    }
                 }
-                // var i;
-                // for(i=0; i<this.annexfiles.length; i++)
-                // {
-                //     console.log(this.annexfiles[i].file);
-                //     if(this.annexfiles[i].invalidMessage=="")
-                //     {
-                //         var fileIDs = await this.submitFile("PetitionAttachment", this.annexfiles[i].file);
-                //         if(fileIDs != null)
-                //         {
-                //             console.log(fileIDs);
-                //             this.form.AttachmentPetitions.push({AttachmentId: fileIDs});
-                //         }
-                //     }
-                // }
             }
             
         },

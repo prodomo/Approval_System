@@ -52,7 +52,7 @@ export default {
                 ProcessingUnits:[],
             },
             form:{
-                DepartmentPetitions:[],
+                PetitionProfessions:[],
             },
             departmentModel:{
                 show: false,
@@ -69,10 +69,10 @@ export default {
             
             var i;
             this.showForm.ProcessingUnits=[];
-            this.form.DepartmentPetitions=[];
+            this.form.PetitionProfessions=[];
             for( i=0; i < departInfo.length; i++)
             {
-                this.form.DepartmentPetitions.push({DepartmentId: departInfo[i].Id});
+                this.form.PetitionProfessions.push({PetitionProfessions: departInfo[i].Id});
                 this.showForm.ProcessingUnits.push({Name: departInfo[i].Name,
                                                     User: departInfo[i].User});
             }
