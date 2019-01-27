@@ -1,7 +1,8 @@
 import "@/lib/prototype";
 import Vue from 'vue';
 import * as uiv from 'uiv';
-// import 'admin-lte';
+import jQuery from 'jquery';
+import 'admin-lte';
 import '@/lib/css';
 import CxltToastr from 'cxlt-vue2-toastr';
 import VeeValidate from 'vee-validate';

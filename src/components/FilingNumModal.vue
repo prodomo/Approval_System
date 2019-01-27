@@ -101,7 +101,7 @@
                 }
                 catch(err)
                 {
-                    alert(err.message);
+                    // alert(err.message);
                     this.guestRedirectHome(err.response.status);
                 }
             },

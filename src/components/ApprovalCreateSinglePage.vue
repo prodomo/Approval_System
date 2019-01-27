@@ -285,6 +285,12 @@
                                 <div v-if="PetitionsChecked">
                                     <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
                                 </div>
+                                <div v-if="showForm.ToDoValue.Id == 1 || showForm.ToDoValue.Id == 18  || showForm.ToDoValue.Id == 5">
+                                    <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
+                                </div>
+                                <div v-else-if="items.Id ==6 || items.Id==9 || items.Id==29">
+                                    <label v-for="user in showForm.WithinUnits">{{user.Name}} {{user.User}} ,</label>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -598,7 +604,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
                 this.sending = false;
             }
@@ -725,7 +731,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
                 this.sending=false;
             }
@@ -808,7 +814,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },

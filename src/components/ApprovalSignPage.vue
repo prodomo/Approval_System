@@ -392,9 +392,11 @@
                                     <label>依據簽呈 {{showForm.AgentDecisionPetitionId}}</label>
                                 </div>
                                 <div v-if="showForm.ToDoValue.Id == 1 || showForm.ToDoValue.Id == 18  || showForm.ToDoValue.Id == 5">
-                                <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
+                                    <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
                                 </div>
-
+                                <div v-else-if="items.Id ==6 || items.Id==9 || items.Id==29">
+                                    <label v-for="user in showForm.WithinUnits">{{user.Name}} {{user.User}} ,</label>
+                                </div>
                             </td>
                         </tr>
                         <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
@@ -711,7 +713,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
 
@@ -757,7 +759,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -785,7 +787,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -835,7 +837,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -855,7 +857,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -873,7 +875,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -891,7 +893,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
@@ -914,7 +916,7 @@ export default {
             }
             catch(err)
             {
-                alert(err.message);
+                // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
         },
