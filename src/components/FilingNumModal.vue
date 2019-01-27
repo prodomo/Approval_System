@@ -20,12 +20,12 @@
                             <td><input type="radio" :value=item v-model="form.filing"></td>
                             <td>{{ item.ShowNumber }}</td>
                             <td v-if="item.Petition != null">{{ item.Petition.Purport }}</td>
-                             <td v-else></td>
+                            <td v-else></td>
                         </tr>
                     </tbody>
                 </table>
             </form>
-            <button class="btn btn-primary" @click="onsubmit(form.filing, form.according)">確認</button>
+            <button class="btn btn-primary" @click="onsubmit(form.filing)">確認</button>
         </div>
     </modal>
 </template>
@@ -42,10 +42,16 @@
                 type: [Boolean, String]
             },
             rid: {
+                default:null,
                 type: [Number]
             },
             modeID:{
                 type: [Number]
+            },
+            articleTypeId:{
+                default:1,
+                type: [Number],
+                
             }
         },
         watch:{
@@ -59,8 +65,8 @@
                 sending: false,
                 showModalStatus: false,
                 form:{
-                    according:1,
-                    filing:null,
+                    according: 1,
+                    filing: null,
                 },
                 items:[]
             };

@@ -375,8 +375,8 @@
                                     <label>{{userName}}</label>
                                 </th>
                                 <td>
-                                    <label>於{{date(form.PetitionComments[form.PetitionComments.length-1].CreatedAt)}}</label><br>
-                                    <label>{{form.PetitionComments[form.PetitionComments.length-1].Comment}}</label>
+                                    <label>於{{date(now)}}</label><br>
+                                    <label>{{showForm.SignInfo}}</label>
                                     
                                 </td>
                             </tr>
@@ -446,6 +446,7 @@ export default {
     data(){
         return{
             step:1,
+            now: new Date(),
             apID: this.$route.params.apID ? parseInt(this.$route.params.apID) : null,
             items:[],
             showModalStatus: false,
@@ -540,31 +541,37 @@ export default {
     },
     methods:{
         async next(type){
-            const isPass = await this.$validator.validateAll();
-            
 
-            if(isPass!=true){
-                // alert(isPass);
-                // alert(JSON.stringify(this.$validator.errors.items));
+
+            if(type==1 && this.step==1)
+            {
+                await this.save();
+                this.getPetitionComment();
+                this.$router.push({
+                    path: `/mainPage`,
+                    });
+                
             }
-            else
-            {   
-                if(this.step==1){
-                    await this.save();
-                    this.getPetitionComment();
-
-                    if(type==2)
-                    {
+            else if(type==2)
+            {
+                const isPass = await this.$validator.validateAll();
+                if(isPass!=true){
+                    // alert(isPass);
+                    // alert(JSON.stringify(this.$validator.errors.items));
+                }
+                else{
+                    if(this.step==1){
+                        this.getPetitionComment();
                         this.step++;
+                        
                     }
                     else{
-                        this.$router.push({
-                        path: `/mainPage`,
-                        });
+                        
                     }
                 }
             }
         },
+            
         showFilingModal() {
             this.filingModel.show = true;
         },
@@ -674,6 +681,7 @@ export default {
             this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
             this.form.PetitionComments[0].AttachmentId = this.showForm.AttachmentFileID;
             this.form.LayerOptionId=null;
+            
             try{
                 if(!this.apID)
                 {
@@ -723,6 +731,20 @@ export default {
             let res = null;
             this.sending = true;
             this.form.LayerOptionId = this.showForm.ToDoValue.Id;
+            var fileID;
+
+            if(this.attachmentFile!=''){
+                fileID = await this.submitFile("PetitionComment", this.attachmentFile);
+            }
+            if(fileID != null)
+            {
+                this.showForm.AttachmentFileID = fileID;
+            }
+
+            this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
+            this.form.PetitionComments[0].AttachmentId = this.showForm.AttachmentFileID;
+            this.form.LayerOptionId=null;
+            
             try{
                 const form = _.cloneDeep(this.form);
 
@@ -821,6 +843,9 @@ export default {
                     this.showForm.Attachment = data.Row.Attachment;
                     this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
                     this.showForm.DepartmentLevel = data.Row.Department.DepartmentLevel;
+                    if(data.Row.PetitionComments[0].Comment != null){
+                        this.showForm.SignInfo = data.Row.PetitionComments[0].Comment;
+                    }
                     this.setPriorityText();
                     this.setConfidentialityText();
                     this.setISOText();

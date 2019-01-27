@@ -11,7 +11,7 @@
                         <tr>
                             <th>簽呈號</th>
                             <td>
-                            <label></label>
+                            <label>{{showForm.showNumber}}</label>
                             </td>
                             <th>依據收文號</th>
                             <td>
@@ -19,7 +19,7 @@
                             </td>
                             <th>建檔日期</th>
                             <td>
-                                <label></label>
+                                <label>{{date(showForm.Date)}}</label>
                             </td>
                             <th>密等</th>
                             <td>
@@ -35,7 +35,7 @@
                         <tr>
                             <th>簽呈字號</th>
                             <td>
-                            <label></label>
+                            <label>{{showForm.showNumberText}}</label>
                             </td>
                             <th>ISO管制文件</th>
                             <td>
@@ -249,7 +249,10 @@
                         <table  class="table table-bordered">
                         <tbody>
                         <tr class="status-table">
-                            <th>
+                            <th v-if="showForm.ReferencePetitionArticleTypeId==2"> 
+                                <label>單位主管</label>
+                            </th>
+                            <th v-else>
                                 <label>承辦人員</label>
                             </th>
                             <th>
@@ -262,7 +265,7 @@
                         </tr>
                         </tbody>
                         </table>
-                        <table  class="table table-bordered">
+                        <table  class="table table-bordered" v-if="showForm.ReferencePetitionArticleTypeId!=2">
                             <tbody>
                             <tr class="status-table">
                                 <th>
@@ -297,7 +300,10 @@
                             <th>簽搞併陳</th>
                             <td>主文檔案:</td>
                             <td colspan="2">
-                                <label v-show="showForm.Attachment != ''"><a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
+                                 <div v-if="showForm.Attachment!='' && mainfile==''">
+                                    <label v-if="showForm.Attachment != null"><a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
+                                </div>
+                                
                             </td>
                             <td>附件檔案:</td>
                             <td colspan="3">
@@ -367,9 +373,10 @@ export default {
             },
             showForm:{
                 ReferencePetitionShowNumber:null,
+                ReferencePetitionArticleTypeId:null,
                 MainDepart:'',
-                Date:'',
-                LimitedDate:null,
+                Date: new Date(),
+                LimitedDate:'',
                 ToDoValue:null,
                 showNumberText:null,
                 showNumber:null,
@@ -420,6 +427,38 @@ export default {
     },
     methods:{
         async next(type){
+
+            if(type==1 && this.step==1)
+            {
+                this.setPriorityText();
+                this.setConfidentialityText();
+                this.setISOText();
+                await this.save();
+                this.$router.push({
+                    path: `/mainPage`,
+                    });
+                
+            }
+            else if(type==2)
+            {
+                
+                const isPass = await this.$validator.validateAll();
+                 if(isPass!=true){
+                // alert(isPass);
+                // alert(JSON.stringify(this.$validator.errors.items));
+                }
+                else{
+                    this.setPriorityText();
+                    this.setConfidentialityText();
+                    this.setISOText();
+                    // await this.save();
+                    this.textForm.status='創稿中';
+                    if(this.step==1)
+                    {
+                        this.step++;
+                    }
+                }
+            }
             const isPass = await this.$validator.validateAll();
 
             if(isPass!=true){
@@ -438,11 +477,6 @@ export default {
                     if(type==2)
                     {
                         this.step++;
-                    }
-                    else{
-                        this.$router.push({
-                        path: `/mainPage`,
-                        });
                     }
                 }
             }
@@ -512,6 +546,7 @@ export default {
         getfilingNum(lastid, type)
         {
             this.showForm.ReferencePetitionShowNumber = lastid.ShowNumber;
+            this.showForm.ReferencePetitionArticleTypeId = type;
             this.form.ReferencePetitionId=lastid.Petition.Id;
             this.showForm.articleTypeIdForLayerOption = type;
 
@@ -548,11 +583,9 @@ export default {
                 
             }
         },
-        async save()
+        async getArticleNumbers()
         {
             let res = null;
-            this.sending = true;
-            this.form.LayerOptionId=null;
             try{
                 if(!this.apID)
                 {
@@ -566,10 +599,43 @@ export default {
                     {
                         const data = res.Data;
                         this.form.ArticleNumberId = data.Row.Id;
+                        
                         this.showForm.showNumber = data.Row.ShowNumber;
                         this.showForm.showNumberText =  data.Row.ShowNumberText;
+                        
 
                     }
+                }  
+            }catch(err)
+            {
+                // alert(err.message);
+                this.guestRedirectHome(err.response.status);
+                this.sending = false;
+            }
+
+        },
+        async save()
+        {
+            let res = null;
+            this.sending = true;
+            this.form.LayerOptionId=null;
+            try{
+                if(!this.apID)
+                {
+                    // // res = await axios.post(`/api/PetitionNumbers`);
+                    // res = await axios.post(`/api/ArticleNumbers`,{
+                    // ArticleTypeId:1,
+                    // });
+                    // res = res.data;
+
+                    // if(res.Status==0)
+                    // {
+                    //     const data = res.Data;
+                    //     this.form.ArticleNumberId = data.Row.Id;
+                    //     this.showForm.showNumber = data.Row.ShowNumber;
+                    //     this.showForm.showNumberText =  data.Row.ShowNumberText;
+
+                    // }
                     await this.sendFiles();
                     // this.form.AttachmentId=96;
                     // this.form.AttachmentPetitions=[{AttachmentId: 97}];
@@ -617,16 +683,18 @@ export default {
             this.sending = true;
             this.form.LayerOptionId=this.showForm.ToDoValue.Id;
             try{
-                const form = _.cloneDeep(this.form);
+                // const form = _.cloneDeep(this.form);
 
                 if(!this.apID)
                 {
-                    // await this.sendFiles();
+                    await this.sendFiles();
+                    const form = _.cloneDeep(this.form);
                     res = await axios.post(`/api/Petitions`, form);
                 }
                 else
                 {
-                    // await this.sendFiles();
+                    await this.sendFiles();
+                    const form = _.cloneDeep(this.form);
                     res = await axios.put(`/api/Petitions/${this.apID}`, form);
                 }
                 res = res.data;
@@ -641,6 +709,7 @@ export default {
             }
             catch(err)
             {
+                this.sending = false;
                 // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
@@ -719,7 +788,14 @@ export default {
                     this.showForm.MainDepart = data.Chief[0];
                     this.showForm.Attachment = data.Row.Attachment;
                     this.showForm.AttachmentPetitions = data.Row.AttachmentPetitions;
-                    this.form.AttachmentId = data.Row.Attachment.Id;
+                    if(data.Row.ReferencePetition != null){
+                        this.showForm.ReferencePetitionShowNumber = data.Row.ReferencePetition.ArticleNumber.ShowNumber;
+                        this.showForm.ReferencePetitionArticleTypeId = data.Row.ReferencePetition.ArticleNumber.ArticleTypeId;
+                    }
+                    if(data.Row.Attachment != null){
+                        this.form.AttachmentId = data.Row.Attachment.Id;
+                    }
+                    
                     this.showForm.DepartmentLevel = data.Row.Department.DepartmentLevel;
                     for(var i=0; i<data.Row.AttachmentPetitions.length; i++)
                     {
@@ -820,17 +896,24 @@ export default {
         },
         setPriorityText()
         {
-            if (this.form.PriorityId==1)
+            var tempDate = new Date();
+            if (this.form.PriorityId==1){
                 this.textForm.priority='普通';
-
-            else if (this.form.PriorityId==2)
+                tempDate.setDate(this.showForm.Date.getDate() + 7);
+                
+            }
+            else if (this.form.PriorityId==2){
                 this.textForm.priority='速件';
-
-            else if (this.form.PriorityId==3)
+                tempDate.setDate(this.showForm.Date.getDate() + 3);
+            }
+            else if (this.form.PriorityId==3){
                 this.textForm.priority='最速件';
-
-            else if (this.form.PriorityId==4)
+                tempDate.setDate(this.showForm.Date.getDate() + 1);
+            }
+            else if (this.form.PriorityId==4){
                 this.textForm.priority='特素件';
+            }
+            this.showForm.LimitedDate = tempDate;
         },
         setConfidentialityText()
         {
@@ -879,6 +962,7 @@ export default {
     },
     async mounted(){
         this.getOptionItems();
+        this.getArticleNumbers();
     }
 }
 </script>
