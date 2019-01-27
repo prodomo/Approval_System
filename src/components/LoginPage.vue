@@ -84,7 +84,7 @@
                         this.$router.push(`/mainPage`);
                     }
                 } catch(err) {
-                    alert(err.message);
+                    // alert(err.message);
                     if(err.response.status == 400) {
                         
                         this.$toast.error({

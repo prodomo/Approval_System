@@ -80,6 +80,7 @@
                     this.$emit('getDepartID', selected, 1); //送會其他單位
                 }
                 else{
+                    console.log('單位內分文');
                     this.$emit('getDepartID', selected, 2); //單位內分文
                 }
                 

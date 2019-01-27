@@ -108,7 +108,7 @@
                                 </div>
                                 <div v-if="showForm.AttachmentPetitions.length>0">
                                     <div v-for="item in showForm.AttachmentPetitions">
-                                        <label><a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
+                                        <label>附件檔案:<a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
                                     </div>
                                 </div>
                             </td>
@@ -148,7 +148,7 @@
                                 <td colspan="7">
                                         <label><input type="radio" :value=null v-model="form.PetitionDecidedStatusId"/>無</label>
                                     <template v-for="decidedStatus in PetitionDecidedStatus">
-                                        <label><input type="radio" :value="decidedStatus.Id" v-model="form.PetitionDecidedStatusId"/>{{decidedStatus.Name}}</label>
+                                        <label><input type="radio" :value="decidedStatus.Id" v-model="form.PetitionDecidedStatusId" @change="showForm.SignInfo+=decidedStatus.Name" />{{decidedStatus.Name}}</label>
                                     </template>
                                 </td>
                             </tr>
@@ -193,6 +193,12 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-else-if="items.Id ==6 || items.Id==9">
+                                        <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" @click="showDepartModal(thisDepartmentId, null, null)" v-validate="'required'" >{{items.Name}}</label><br>
+                                        <div v-if="showForm.WithinUnits.length >0">
+                                            <label v-for="user in showForm.WithinUnits">{{user.Name}} {{user.User}} ,</label>
+                                        </div>
+                                    </div>
                                     <div v-else>
                                         <label><input type="radio" name="ToDoValue" :value="items" v-model="showForm.ToDoValue" v-validate="'required'">{{items.Name}}</label><br>
                                     </div>
@@ -222,13 +228,13 @@
                         </tbody>
                         <tr v-if="form.PetitionComments.length!=0">
                             <td colspan="8" class="button">
-                            <btn class="btn btn-primary" @click="next(1)">存草稿</btn>
-                            <btn class="btn btn-primary" @click="next(2)">預覽</btn>
+                            <btn class="btn btn-primary" :disabled="sending" @click="next(1)">存草稿</btn>
+                            <btn class="btn btn-primary" :disabled="sending" @click="next(2)">預覽</btn>
                             </td>
                         </tr>
                         <tr v-if="form.PetitionComments.length==0">
                             <td colspan="8" class="button">
-                            <btn class="btn btn-primary" @click="goMainPage">回主選單</btn>
+                            <btn class="btn btn-primary" :disabled="sending" @click="goMainPage">回主選單</btn>
                             </td>
                         </tr>
                     </table>
@@ -326,7 +332,16 @@
                             <td>
                                 <label>於{{date(showForm.Date)}}</label><br>
                                 <label>擬辦{{form.Proposition}}</label>
+                                <div v-if="showForm.Attachment != null">
+                                    <label>主文檔案： <a @click="downloadFile('Petition',showForm.Attachment.FileName, showForm.Attachment.DownloadFileName)">{{showForm.Attachment.DownloadFileName}}</a></label>
+                                </div>
+                                <div v-if="showForm.AttachmentPetitions.length>0">
+                                    <div v-for="item in showForm.AttachmentPetitions">
+                                        <label>附件檔案:<a @click="downloadFile('PetitionAttachment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label><br>
+                                    </div>
+                                </div>
                             </td>
+                            
                         </tr>
                         </tbody>
                         </table>
@@ -343,6 +358,7 @@
                                 <td>
                                     <label>於{{date(item.CreatedAt)}}</label><br>
                                     <label>{{item.Comment}}</label>
+                                    <label>附件檔案： <a v-if="item.Attachment!=null" @click="downloadFile('PetitionComment',item.Attachment.FileName, item.Attachment.DownloadFileName)">{{item.Attachment.DownloadFileName}}</a></label>
                                 </td>
                             </tr>
                             </tbody>
@@ -361,6 +377,7 @@
                                 <td>
                                     <label>於{{date(form.PetitionComments[form.PetitionComments.length-1].CreatedAt)}}</label><br>
                                     <label>{{form.PetitionComments[form.PetitionComments.length-1].Comment}}</label>
+                                    
                                 </td>
                             </tr>
                             </tbody>
@@ -370,10 +387,14 @@
                         <tr>
                             <th>簽核選項</th>
                             <td colspan="7">
-                                <label>{{showForm.ToDoValue.Name}}</label>
+                                <label>{{showForm.ToDoValue.Name}}</label><br>
                                 <div v-if="form.AgentDecisionPetitionId != null">
                                     <label>依據簽呈 {{showForm.AgentDecisionPetitionId}}</label>
                                 </div>
+                                <div v-if="showForm.ToDoValue.Id == 1 || showForm.ToDoValue.Id == 18  || showForm.ToDoValue.Id == 5">
+                                <label v-for="user in showForm.ProcessingUnits">{{user.department}} ,</label>
+                                </div>
+
                             </td>
                         </tr>
                         <tr  v-if="userName =='楊豐文' && form.PetitionComments.length!=0">
@@ -391,8 +412,8 @@
 
                         </tbody>
                         <tr><td colspan="8" class="button">
-                        <btn class="btn btn-primary" @click="step--">取消預覽</btn>
-                        <btn class="btn btn-primary" @click="onSubmit">確定送出</btn>
+                        <btn class="btn btn-primary" :disabled="sending" @click="step--">取消預覽</btn>
+                        <btn class="btn btn-primary" :disabled="sending" @click="onSubmit">確定送出</btn>
                         </td></tr>
                     </table>
                 </div>
@@ -465,6 +486,7 @@ export default {
                 showNumber:null,
                 LayerOptions:null,
                 ProcessingUnits:[],
+                WithinUnits:[],
                 InitUser:'',
                 SignInfo:'',
                 AttachmentFileID:'',
@@ -501,6 +523,7 @@ export default {
             userName: state => state.user.user.Name,
             chief: state => state.user.user.Chief,
             department: state => state.user.user.Department,
+            thisDepartmentId: state=> state.user.user.DepartmentId,
         }),
         isDisabled() {
             if(this.form.PetitionProfessions.length!=0 || this.showForm.ProcessingUnits.length!=0)
@@ -530,7 +553,7 @@ export default {
 
                     if(type==2)
                     {
-                    this.step++;
+                        this.step++;
                     }
                     else{
                         this.$router.push({
@@ -592,10 +615,13 @@ export default {
         {
             console.log(departInfo);
             var i;
-            this.showForm.ProcessingUnits=[];
+            
             this.form.PetitionProfessions=[];
+            this.showForm.WithinUnits=[];
+            this.showForm.ProcessingUnits=[];
             if(type == 1) //送會其他單位
             {
+                
                 for( i=0; i < departInfo.length; i++)
                 {
                     this.form.PetitionProfessions.push({ProfessionId: departInfo[i].Id});
@@ -604,7 +630,14 @@ export default {
             }
             else if(type ==2) //單位內分文
             {
-                this.showForm.ProcessingUnits.push({department:departInfo[i].Department.Name ,Name: departInfo[i].Name, User:departInfo[i].User.Name });
+                
+                
+                 for( i=0; i < departInfo.length; i++)
+                {
+                    this.form.PetitionComments.push({UserId:departInfo[i].User.Id, ProfessionId:departInfo[i].Id});
+                    this.showForm.WithinUnits.push({department:departInfo[i].Department.Name ,Name: departInfo[i].Name, User:departInfo[i].User.Name });
+                }
+                
             }
         },
         addword(word)
@@ -674,6 +707,7 @@ export default {
                     this.apID = data.Row.Id;
                     this.showForm.LimitedDate = data.Row.LimitedDate;
                 }
+                this.sending=false;
             }
             catch(err)
             {
@@ -705,9 +739,8 @@ export default {
                         title: '成功訊息',
                         message: '送出成功'
                         });
-                    // this.$router.push({
-                    // path: `/mainPage`,
-                    // });
+                    this.sending=false;
+
                 }
                 else if(res.Status==-3)
                 {
@@ -716,6 +749,7 @@ export default {
                         message: '此文不能代為決行'
                         });
                 }
+
                 this.$router.push({
                     path: `/mainPage`,
                     });

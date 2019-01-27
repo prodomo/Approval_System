@@ -2,7 +2,7 @@
     
     <form enctype="multipart/form-data">
         <div class="field">
-            <input multiple type="file" ref="files" @change="selectFile" >
+            <input multiple type="file" ref="files" accept="image/*,.pdf, .doc,.docx,application/msword," @change="selectFile" >
         </div>
 
         <div class="filed">

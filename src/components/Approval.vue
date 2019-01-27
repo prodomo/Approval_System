@@ -394,8 +394,8 @@ export default {
             const isPass = await this.$validator.validateAll();
 
             if(isPass!=true){
-                alert(isPass);
-                alert(JSON.stringify(this.$validator.errors.items));
+                // alert(isPass);
+                // alert(JSON.stringify(this.$validator.errors.items));
             }
             else
             {

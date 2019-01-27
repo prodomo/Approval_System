@@ -3,8 +3,9 @@
         <div>
             <form>
                 <div class="row">請選擇來源類型:
-                    <label><input type="radio" name="according" value=2 v-model="form.according" @change="getArticleNumbers"/>外部</label>
                     <label><input type="radio" name="according" value=1 v-model="form.according" @change="getArticleNumbers"/>內部簽呈</label>
+                    <label><input type="radio" name="according" value=2 v-model="form.according" @change="getArticleNumbers"/>外部簽呈</label>
+
                 </div>
                 <table class="table table-bordered">
                     <thead>
@@ -18,12 +19,13 @@
                         <tr v-for="item in items">
                             <td><input type="radio" :value=item v-model="form.filing"></td>
                             <td>{{ item.ShowNumber }}</td>
-                            <td>{{ item.Petition.Purport }}</td>
+                            <td v-if="item.Petition != null">{{ item.Petition.Purport }}</td>
+                             <td v-else></td>
                         </tr>
                     </tbody>
                 </table>
             </form>
-            <button class="btn btn-primary" @click="onsubmit(form.filing)">確認</button>
+            <button class="btn btn-primary" @click="onsubmit(form.filing, form.according)">確認</button>
         </div>
     </modal>
 </template>
@@ -68,7 +70,7 @@
                 
             },
             onsubmit(id){
-                this.$emit('getfilingNum', id);
+                this.$emit('getfilingNum', id, this.form.according);
                 this.hideModal();
                 this.resetform();
             },
@@ -83,7 +85,7 @@
             {
                 let res = null;
                 try{
-
+                    console.log(this.form.according)
                     res = await axios.get(`/api/ArticleNumbers`, {params:{
                         mode: this.modeID,
                         articleTypeId:this.form.according
