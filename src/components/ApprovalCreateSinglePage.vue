@@ -441,7 +441,7 @@ export default {
             }
             else if(type==2)
             {
-                
+                this.sending=true;
                 const isPass = await this.$validator.validateAll();
                  if(isPass!=true){
                 // alert(isPass);
@@ -458,27 +458,7 @@ export default {
                         this.step++;
                     }
                 }
-            }
-            const isPass = await this.$validator.validateAll();
-
-            if(isPass!=true){
-                // alert(isPass);
-                // alert(JSON.stringify(this.$validator.errors.items));
-            }
-            else
-            {
-                if(this.step==1){
-                    this.setPriorityText();
-                    this.setConfidentialityText();
-                    this.setISOText();
-                    await this.save();
-                    this.textForm.status='創稿中';
-
-                    if(type==2)
-                    {
-                        this.step++;
-                    }
-                }
+                this.sending=false;
             }
         },
         async reset(){

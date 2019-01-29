@@ -563,7 +563,6 @@ export default {
                     if(this.step==1){
                         this.getPetitionComment();
                         this.step++;
-                        
                     }
                     else{
                         
@@ -680,7 +679,8 @@ export default {
 
             this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
             this.form.PetitionComments[0].AttachmentId = this.showForm.AttachmentFileID;
-            this.form.LayerOptionId=null;
+            
+            this.form.LayerOptionId=null; //for 存草稿
             
             try{
                 if(!this.apID)
@@ -730,7 +730,7 @@ export default {
         {
             let res = null;
             this.sending = true;
-            this.form.LayerOptionId = this.showForm.ToDoValue.Id;
+            this.form.LayerOptionId = this.showForm.ToDoValue.Id; //for 正式送出
             var fileID;
 
             if(this.attachmentFile!=''){
@@ -743,7 +743,6 @@ export default {
 
             this.form.PetitionComments[0].Comment = this.showForm.SignInfo;
             this.form.PetitionComments[0].AttachmentId = this.showForm.AttachmentFileID;
-            this.form.LayerOptionId=null;
             
             try{
                 const form = _.cloneDeep(this.form);
@@ -868,6 +867,7 @@ export default {
         },
         async getPetitionComment()
         {
+            this.sending=true;
             let res = null;
             try{
                 res = await axios.get(`/api/PetitionComments`, {params:{
@@ -885,6 +885,7 @@ export default {
                 // alert(err.message);
                 this.guestRedirectHome(err.response.status);
             }
+            this.sending=false;
         },
         async getPetitionCommonVocabulary()
         {
